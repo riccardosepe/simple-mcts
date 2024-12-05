@@ -1,8 +1,7 @@
 import copy
 from typing import Tuple, List
 import time
-from model import Model, GameMove
-from game_state import GameState, MCTSState
+from model import Model
 from tree import Tree, Node, GameNode
 from functools import reduce
 import numpy as np
@@ -30,7 +29,7 @@ class MCTS:
         game_state: the GameState object corresponding to the current state of the "actual" game
         tree: the tree structure used for the search
     """
-    def __init__(self, game_state: GameState, current_player: str) -> None:
+    def __init__(self, game_state: np.ndarray, current_player: str) -> None:
         self.game_state = game_state
         prev_player = game_state.get_prev_player_name(current_player)
         root = Node(
@@ -207,7 +206,6 @@ class MCTS:
 
         return score
 
-    # def backpropagate(self, node, winner: int):
     def _backpropagate(self, node: Node, score: int) -> None:
         """
         Performs the backpropagate phase of the MCTS.

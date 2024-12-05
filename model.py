@@ -2,10 +2,6 @@ import numpy as np
 import copy
 import random
 from typing import Tuple, List
-from game_state import MCTSState
-from game_move import GameMove
-from utils import Color, CARD_QUANTITIES
-from rules import Rules
 
 
 class Model:

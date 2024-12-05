@@ -1,10 +1,9 @@
 import copy
 from typing import List
-from model import GameMove
 
 
 class GameNode:
-    def __init__(self, move: GameMove) -> None:
+    def __init__(self, move: int) -> None:
         self.move = move
         self.value = 0
         self.simulations = 0
