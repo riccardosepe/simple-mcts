@@ -1,7 +1,5 @@
 import copy
-from typing import Tuple, List
 import time
-from model import Model
 from tree import Tree, Node, GameNode
 from functools import reduce
 import numpy as np
@@ -29,15 +27,14 @@ class MCTS:
         game_state: the GameState object corresponding to the current state of the "actual" game
         tree: the tree structure used for the search
     """
-    def __init__(self, game_state: np.ndarray, current_player: str) -> None:
+    def __init__(self, game_state: np.ndarray) -> None:
         self.game_state = game_state
-        prev_player = game_state.get_prev_player_name(current_player)
         root = Node(
-            GameNode(GameMove(prev_player, action_type=None))
+            GameNode(-1)
         )  # dummy game-move
         self.tree = Tree(root)
 
-    def run_search(self, time_budget: int = None, iterations: int = None) -> GameMove:
+    def run_search(self, time_budget: int = None, iterations: int = None):
         """
         Wrapper to the call of each iteration of the MCTS.
 
@@ -112,33 +109,33 @@ class MCTS:
                 )
             input("Enter...")
 
-    def _select(self, model: Model) -> Tuple[Node, Model]:
+    def _select(self, env):
         """
         Performs the select phase of the MCTS.
 
         Args:
-            model: the class Model object
+            env: the class Model object
         """
         node = self.tree.get_root()
         # model.state.redeterminize_hand(model.state.root_player)
-        next_player = model.state.get_next_player_name(node.data.move.player)
-        while not node.is_leaf() and self._is_fully_explored(node, model):
+        next_player = env.state.get_next_player_name(node.data.move.player)
+        while not node.is_leaf() and self._is_fully_explored(node, env):
             node = self._get_best_child_UCB1(node)
             # make the move that bring us to "node"
-            model.make_move(node.data.move, update_saved_hand=True)
+            env.make_move(node.data.move, update_saved_hand=True)
             assert next_player == node.data.move.player
-            model.restore_hand(node.data.move.player)  # restore hand
-            next_player = model.state.get_next_player_name(node.data.move.player)
-            model.redeterminize_hand(next_player)  # re-determinize hand
-        return node, model
+            env.restore_hand(node.data.move.player)  # restore hand
+            next_player = env.state.get_next_player_name(node.data.move.player)
+            env.redeterminize_hand(next_player)  # re-determinize hand
+        return node, env
 
-    def _is_fully_explored(self, node: Node, model: Model) -> bool:
+    def _is_fully_explored(self, node: Node, model) -> bool:
         """
         return True if there is no more moves playable at a certain level that has not been tried yet
         """
         return len(self._get_available_plays(node, model)) == 0
 
-    def _get_available_plays(self, node: Node, model: Model) -> List[GameMove]:
+    def _get_available_plays(self, node: Node, model):
         """
         Returns the list of feasible moves from a certain node
 
@@ -156,12 +153,12 @@ class MCTS:
             )
         )
 
-    def _expand(self, node: Node, model: Model) -> Tuple[Node, Model]:
+    def _expand(self, node: Node, model):
         """
         Performs the expand phase of the MCTS.
 
         Args:
-            node: the frontier node returned bu the _select
+            node: the frontier node returned by the _select
             model: the object of class model
         """
         expanded_node = None
@@ -181,7 +178,7 @@ class MCTS:
             print("expanding..")
         return expanded_node, model
 
-    def _simulate(self, node: Node, model: Model) -> int:
+    def _simulate(self, node: Node, model) -> int:
         """
         Performs the simulate phase of the MCTS.
 
