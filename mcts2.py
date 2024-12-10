@@ -83,24 +83,25 @@ class MCTS:
 
 
     @staticmethod
-    def ucb(node, parent, c=0.1):
+    def _ucb(node, parent, c=0.1):
         """
-        Calculates the Upper Confidence Bound for an MCTS.
+        Calculates the Upper Confidence Bound for a tree.
         :param node: the node for which it calculates the UCB
         :param parent: the parent node of `node`
         :param c: the coefficient of the formula
         """
 
-        exploitation = node.data.value / node.data.simulations
-        if parent.data.simulations == 0:
+        exploitation = node.score / node.visits
+        if parent.visits == 0:
             exploration = 0
         else:
             exploration = np.sqrt(
-                np.log(parent.data.simulations) / node.data.simulations
+                np.log(parent.visits) / node.visits
             )
         return exploitation + c * exploration
 
     @staticmethod
-    def _ucb_child(parent):
-        scores = [MCTS.ucb(node, parent) for node in parent.children]
-        return parent.children[np.argmax(scores)]
+    def select_ucb(parent):
+        scores = [(idx, MCTS._ucb(node, parent)) for idx, node in parent.children.items()]
+        best_move = max(scores, key=lambda x: x[1])[0]
+        return best_move, parent.children[best_move]
