@@ -46,6 +46,8 @@ class MCTS:
         """
         The core of the MCTS algorithm, i.e. the sequence of the four steps: Select, Expand, Simulate, Backpropagate.
         """
+        checkpoint = self.transition_model.backup()
+
         selected_node = self._select()
         expanded_node, reward, done = self._expand(selected_node)
         # NB: very uncommon in practice, the following line handles small game trees where it's possible to reach a
