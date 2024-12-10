@@ -83,8 +83,8 @@ class MCTS:
             elapsed_time = time.time() - start_time
             iteration += 1
 
-        best_move = MCTS.select_ucb(self.tree.root)
-        return best_move
+        best_action = MCTS.select_ucb(self.tree.root)
+        return best_action
 
 
     @staticmethod
@@ -108,5 +108,5 @@ class MCTS:
     @staticmethod
     def select_ucb(parent):
         scores = [(idx, MCTS._ucb(node, parent)) for idx, node in parent.children.items()]
-        best_move = max(scores, key=lambda x: x[1])[0]
-        return best_move, parent.children[best_move]
+        best_action = max(scores, key=lambda x: x[1])[0]
+        return best_action, parent.children[best_action]
