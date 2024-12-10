@@ -61,6 +61,14 @@ class Tree:
         def is_root(self):
             return self._parent_node is None
 
+        @property
+        def score(self):
+            return self._score
+
+        @property
+        def visits(self):
+            return self._visits
+
     """
     NB: this tree is thought (for the moment) to support only environments with a maximum branching factor
     """
