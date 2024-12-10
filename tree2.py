@@ -14,6 +14,9 @@ class Tree:
             self._visits = 0
             self._score = 0
 
+        def __repr__(self):
+            return f"Node({self._id})"
+
         def add_child(self, child, action):
             # NB: this method is only meant to be used within the Tree class
             self._children[action] = child
