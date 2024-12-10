@@ -14,21 +14,21 @@ class MCTS:
     def _select(self):
         node = self.tree.root
         while not node.is_leaf and node.is_fully_expanded:
-            move, node = self.select_ucb(node)
+            action, node = self.select_ucb(node)
             # TODO: do i need the output of step?
-            self.transition_model.step(move)
+            self.transition_model.step(action)
         return node
 
     def _expand(self, node):
-        random_move = node.random_move(exclude=True)
-        self.transition_model.step(random_move)
-        new_node = self.tree.insert_node(node.id, random_move, self.transition_model.legal_actions)
+        random_action = node.random_move(exclude=True)
+        self.transition_model.step(random_action)
+        new_node = self.tree.insert_node(node.id, random_action, self.transition_model.legal_actions)
         return new_node
 
     def _simulate(self, node):
         ret = 0
         while True:
-            action = random.choice(node.available_moves)
+            action = random.choice(node.available_actions)
             _, r, d, _ = self.transition_model.step(action)
             # sparse / non-sparse setting
             ret += r
@@ -57,8 +57,8 @@ class MCTS:
         Run a bunch of `_plan_iteration`s until either the iterations budget or the time budget is reached.
 
         :param iterations_budget: the maximum number of iterations to run
-        :param time_budget: the maximum available time for a single move
-        :return: the chosen move
+        :param time_budget: the maximum available time for a single action
+        :return: the chosen action
         """
 
         if iterations_budget is None and time_budget is None:

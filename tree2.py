@@ -10,13 +10,13 @@ class Tree:
             self._id = _id
             self._children = dict.fromkeys(legal_actions, None)
             self._parent_node = parent_node
-            self._available_moves = legal_actions[:]
+            self._available_actions = legal_actions[:]
             self._visits = 0
             self._score = 0
 
-        def add_child(self, child, move):
+        def add_child(self, child, action):
             # NB: this method is only meant to be used within the Tree class
-            self._children[move] = child
+            self._children[action] = child
 
         def visit(self):
             self._visits += 1
@@ -24,11 +24,11 @@ class Tree:
         def increase_score(self, score):
             self._score += score
 
-        def random_move(self, exclude=False):
-            move = random.choice(self._available_moves)
+        def random_action(self, exclude=False):
+            action = random.choice(self._available_actions)
             if exclude:
-                self._available_moves.remove(move)
-            return move
+                self._available_actions.reaction(action)
+            return action
 
         @property
         def id(self):
@@ -48,11 +48,11 @@ class Tree:
 
         @property
         def is_fully_expanded(self):
-            return len(self._available_moves) == 0
+            return len(self._available_actions) == 0
 
         @property
-        def available_moves(self):
-            return self._available_moves
+        def available_actions(self):
+            return self._available_actions
 
         @property
         def is_root(self):
@@ -65,10 +65,10 @@ class Tree:
         self._root = Tree.Node(None, 0, legal_actions=root_legal_actions)
         self._nodes = []
 
-    def insert_node(self, parent_id, move, legal_actions):
+    def insert_node(self, parent_id, action, legal_actions):
         parent = self._nodes[parent_id]
         new_node = Tree.Node(parent, len(self._nodes), legal_actions)
-        parent.add_child(new_node, move)
+        parent.add_child(new_node, action)
         return new_node
 
     @property
