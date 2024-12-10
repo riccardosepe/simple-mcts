@@ -30,7 +30,7 @@ class Tree:
         def random_action(self, exclude=False):
             action = random.choice(self._available_actions)
             if exclude:
-                self._available_actions.reaction(action)
+                self._available_actions.remove(action)
             return action
 
         @property
