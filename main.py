@@ -12,7 +12,6 @@ def main():
     env = TicTacToeEnv()
 
     obs = env.reset()
-    agent = MCTS(env)
 
     player = True
 
@@ -24,6 +23,7 @@ def main():
             action = int(input("Insert an action: "))
             obs, _, done, _ = env.step(action)
         else:
+            agent = MCTS(env)
             action = agent.plan(iterations_budget=10)
             obs, _, done, _ = env.step(action)
 
