@@ -1,55 +1,19 @@
-import logging
-
 import gym
 from gym import spaces
 
-CODE_MARK_MAP = {0: ' ', 1: 'O', 2: 'X'}
+MAP = {0: ' ', 1: 'O', 2: 'X'}
 NUM_LOC = 9
+N = 3
 O_REWARD = 1
 X_REWARD = -1
 NO_REWARD = 0
-
-LEFT_PAD = '  '
-LOG_FMT = logging.Formatter('%(levelname)s '
-                            '[%(filename)s:%(lineno)d] %(message)s',
-                            '%Y-%m-%d %H:%M:%S')
-
-
-def tomark(code):
-    return CODE_MARK_MAP[code]
 
 
 def tocode(mark):
     return 1 if mark == 'O' else 2
 
-
 def next_mark(mark):
     return 'X' if mark == 'O' else 'O'
-
-
-def agent_by_mark(agents, mark):
-    for agent in agents:
-        if agent.mark == mark:
-            return agent
-
-
-def after_action_state(state, action):
-    """Execute an action and returns resulted state.
-
-    Args:
-        state (tuple): Board status + mark
-        action (int): Action to run
-
-    Returns:
-        tuple: New state
-    """
-
-    board, mark = state
-    nboard = list(board[:])
-    nboard[action] = tocode(mark)
-    nboard = tuple(nboard)
-    return nboard, next_mark(mark)
-
 
 def check_game_status(board):
     """Return game status by current board status.
@@ -87,23 +51,20 @@ def check_game_status(board):
 class TicTacToeEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self, alpha=0.02, show_number=False):
+    def __init__(self, seed=None):
         self.action_space = spaces.Discrete(NUM_LOC)
         self.observation_space = spaces.Discrete(NUM_LOC)
-        self.alpha = alpha
-        self.set_start_mark('O')
-        self.show_number = show_number
-        self.seed()
-        self.reset()
+        self.start_mark = 'O'
+        self.reset(seed=seed)
+        self.mark = None
+        self.board = None
+        self.done = False
 
-    def set_start_mark(self, mark):
-        self.start_mark = mark
-
-    def reset(self):
+    def reset(self, **kwargs):
         self.board = [0] * NUM_LOC
         self.mark = self.start_mark
         self.done = False
-        return self._get_obs()
+        return self.observation
 
     def step(self, action):
         """Step environment by action.
@@ -121,14 +82,13 @@ class TicTacToeEnv(gym.Env):
 
         loc = action
         if self.done:
-            return self._get_obs(), 0, True, None
+            return self.observation, 0, True, None
 
         reward = NO_REWARD
         # place
         self.board[loc] = tocode(self.mark)
         status = check_game_status(self.board)
-        logging.debug("check_game_status board {} mark '{}'"
-                      " status {}".format(self.board, self.mark, status))
+
         if status >= 0:
             self.done = True
             if status in [1, 2]:
@@ -137,10 +97,7 @@ class TicTacToeEnv(gym.Env):
 
         # switch turn
         self.mark = next_mark(self.mark)
-        return self._get_obs(), reward, self.done, None
-
-    def _get_obs(self):
-        return tuple(self.board), self.mark
+        return self.observation, reward, self.done, None
 
     def render(self, mode='human', close=False):
         if close:
@@ -149,44 +106,42 @@ class TicTacToeEnv(gym.Env):
             self._show_board(print)  # NOQA
             print('')
         else:
-            self._show_board(logging.info)
-            logging.info('')
+            raise RuntimeError
 
-    def show_episode(self, human, episode):
-        self._show_episode(print if human else logging.warning, episode)
+    def _show_board(self, print_fn):
+        for i in range(N):
+            for j in range(N):
+                print_fn(MAP[self.board[3*i+j]], end='')
 
-    def _show_episode(self, showfn, episode):
-        showfn("==== Episode {} ====".format(episode))
+                if j < N-1:
+                    print_fn('|', end='')
+                else:
+                    print_fn('')
+            if i < N-1:
+                print('-----')
 
-    def _show_board(self, showfn):
-        """Draw tictactoe board."""
-        for j in range(0, 9, 3):
-            def mark(i):
-                return tomark(self.board[i]) if not self.show_number or\
-                    self.board[i] != 0 else str(i+1)
-            showfn(LEFT_PAD + '|'.join([mark(i) for i in range(j, j+3)]))
-            if j < 6:
-                showfn(LEFT_PAD + '-----')
+    def backup(self):
+        state = {
+            'board': self.board.copy(),
+            'mark': self.mark,
+            'done': self.done,
+        }
+        return state
 
-    def show_turn(self, human, mark):
-        self._show_turn(print if human else logging.info, mark)
+    def load(self, checkpoint):
+        try:
+            self.board = checkpoint['board']
+            self.mark = checkpoint['mark']
+            self.done = checkpoint['done']
+        except KeyError:
+            return False
+        return True
 
-    def _show_turn(self, showfn, mark):
-        showfn("{}'s turn.".format(mark))
-
-    def show_result(self, human, mark, reward):
-        self._show_result(print if human else logging.info, mark, reward)
-
-    def _show_result(self, showfn, mark, reward):
-        status = check_game_status(self.board)
-        assert status >= 0
-        if status == 0:
-            showfn("==== Finished: Draw ====")
-        else:
-            msg = "Winner is '{}'!".format(tomark(status))
-            showfn("==== Finished: {} ====".format(msg))
-        showfn('')
+    @property
+    def observation(self):
+        return tuple(self.board), self.mark
 
     @property
     def legal_actions(self):
         return [i for i, c in enumerate(self.board) if c == 0]
+
