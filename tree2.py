@@ -74,12 +74,13 @@ class Tree:
     """
     def __init__(self, root_legal_actions):
         self._root = Tree.Node(None, 0, legal_actions=root_legal_actions)
-        self._nodes = []
+        self._nodes = [self._root]
 
     def insert_node(self, parent_id, action, legal_actions):
         parent = self._nodes[parent_id]
         new_node = Tree.Node(parent, len(self._nodes), legal_actions)
         parent.add_child(new_node, action)
+        self._nodes.append(new_node)
         return new_node
 
     @property
