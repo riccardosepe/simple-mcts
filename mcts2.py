@@ -20,25 +20,24 @@ class MCTS:
         return node
 
     def _expand(self, node):
-        random_action = node.random_move(exclude=True)
-        self.transition_model.step(random_action)
+        random_action = node.random_action(exclude=True)
+        _, r, d, _ = self.transition_model.step(random_action)
         new_node = self.tree.insert_node(node.id, random_action, self.transition_model.legal_actions)
-        return new_node
+        return new_node, r, d
 
     def _simulate(self, node):
         ret = 0
         while True:
-            action = random.choice(node.available_actions)
+            action = random.choice(self.transition_model.legal_actions)
             _, r, d, _ = self.transition_model.step(action)
             # sparse / non-sparse setting
             ret += r
             if d:
                 break
-
         return ret
 
     def _backpropagate(self, node, score):
-        while not node.is_root:
+        while node is not None:
             node.visit()
             node.increase_score(score)
             node = node.parent
@@ -48,9 +47,15 @@ class MCTS:
         The core of the MCTS algorithm, i.e. the sequence of the four steps: Select, Expand, Simulate, Backpropagate.
         """
         selected_node = self._select()
-        expanded_node = self._expand(selected_node)
-        simulation_result = self._simulate(expanded_node)
-        self._backpropagate(expanded_node, simulation_result)
+        expanded_node, reward, done = self._expand(selected_node)
+        # NB: very uncommon in practice, the following line handles small game trees where it's possible to reach a
+        # terminal state during the expansion phase
+        if done:
+            score = reward
+        else:
+            score = self._simulate(expanded_node)
+        self._backpropagate(expanded_node, score)
+        self.transition_model.load(checkpoint)
 
     def plan(self, iterations_budget=None, time_budget=None):
         """
