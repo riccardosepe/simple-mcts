@@ -61,16 +61,15 @@ class Tree:
     """
     NB: this tree is thought (for the moment) to support only environments with a maximum branching factor
     """
-    def __init__(self, branching_factor=4):
-        self._root = Node(None, 0, branching_factor)
+    def __init__(self, root_legal_actions):
+        self._root = Tree.Node(None, 0, legal_actions=root_legal_actions)
         self._nodes = []
-        # TODO: this is going to be problematic for the scenarios where some moves are not allowed
-        self._branching_factor = branching_factor
 
-    def insert_node(self, parent_id):
+    def insert_node(self, parent_id, move, legal_actions):
         parent = self._nodes[parent_id]
-        new_node = Node(parent, len(self._nodes), self._branching_factor)
-        parent.add_child(new_node)
+        new_node = Tree.Node(parent, len(self._nodes), legal_actions)
+        parent.add_child(new_node, move)
+        return new_node
 
     @property
     def root(self):
