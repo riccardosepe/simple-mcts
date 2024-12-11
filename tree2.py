@@ -70,6 +70,14 @@ class Tree:
         def visits(self):
             return self._visits
 
+        @property
+        def is_terminal(self):
+            return self._game_data['done']
+
+        @property
+        def game_reward(self):
+            return self._game_data['reward']
+
     """
     NB: this tree is thought (for the moment) to support only environments with a maximum branching factor
     """
