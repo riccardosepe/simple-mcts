@@ -49,17 +49,35 @@ class MCTS:
         """
         The core of the MCTS algorithm, i.e. the sequence of the four steps: Select, Expand, Simulate, Backpropagate.
         """
+        # save the game state
         checkpoint = self.transition_model.backup()
 
+        # 1. SELECT
         selected_node = self._select()
-        expanded_node, reward, done = self._expand(selected_node)
-        # NB: very uncommon in practice, the following line handles small game trees where it's possible to reach a
+
+        # NB: very uncommon in practice, the following lines handle small game trees where it's possible to reach a
         # terminal state during the expansion phase
-        if done:
-            score = reward
+
+        if not selected_node.is_terminal:
+            # 2. EXPAND
+            expanded_node = self._expand(selected_node)
+            terminal_node = expanded_node
+
+            if not expanded_node.is_terminal:
+                # 3. SIMULATE
+                score = self._simulate(expanded_node)
+
+            else:
+                score = expanded_node.game_reward
+
         else:
-            score = self._simulate(expanded_node)
-        self._backpropagate(expanded_node, score)
+            terminal_node = selected_node
+            score = selected_node.game_reward
+
+        # 4. BACKPROPAGATE
+        self._backpropagate(terminal_node, score)
+
+        # restore the game state
         self.transition_model.load(checkpoint)
 
     def plan(self, iterations_budget=None, time_budget=None):
