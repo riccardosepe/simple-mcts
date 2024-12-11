@@ -48,7 +48,7 @@ class Tree:
 
         @property
         def is_leaf(self):
-            return len(self._children) == 0
+            return all(map(lambda x: x is None, self._children.values()))
 
         @property
         def is_fully_expanded(self):
