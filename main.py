@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 from hanoi_env import TowersOfHanoiEnv
 from mcts2 import MCTS
@@ -6,6 +7,7 @@ from tictactoe_env import TicTacToeEnv
 
 HUMAN = True
 BOT = False
+SEED = 0
 
 
 def main():
@@ -33,5 +35,7 @@ def main():
 
     
 if __name__ == '__main__':
+    random.seed(SEED)
+    np.random.seed(SEED)
     main()
    
