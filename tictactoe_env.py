@@ -156,3 +156,13 @@ class TicTacToeEnv(gym.Env):
     def legal_actions(self):
         return [i for i, c in enumerate(self.board) if c == 0]
 
+    def game_result(self):
+        status = check_game_status(self.board)
+        if status == 0:
+            return "Draw"
+        elif status == 1:
+            return "O won"
+        elif status == 2:
+            return "X won"
+        else:
+            raise ValueError
