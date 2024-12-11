@@ -67,6 +67,18 @@ class TicTacToeEnv(gym.Env):
         self.done = False
         return self.observation
 
+    def reward(self):
+        reward = NO_REWARD
+        status = check_game_status(self.board)
+
+        if status >= 0:
+            self.done = True
+            if status in [1, 2]:
+                # always called by self
+                reward = O_REWARD if self.mark == 'O' else X_REWARD
+
+        return reward
+
     def step(self, action):
         """Step environment by action.
 
@@ -82,20 +94,14 @@ class TicTacToeEnv(gym.Env):
         assert self.action_space.contains(action)
         self.last_action = action
 
-        loc = action
         if self.done:
             return self.observation, 0, True, None
 
-        reward = NO_REWARD
         # place
-        self.board[loc] = tocode(self.mark)
-        status = check_game_status(self.board)
+        self.board[action] = tocode(self.mark)
 
-        if status >= 0:
-            self.done = True
-            if status in [1, 2]:
-                # always called by self
-                reward = O_REWARD if self.mark == 'O' else X_REWARD
+        # calculate reward
+        reward = self.reward()
 
         # switch turn
         self.mark = next_mark(self.mark)
