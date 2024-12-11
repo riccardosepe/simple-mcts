@@ -106,7 +106,8 @@ class MCTS:
             elapsed_time = time.time() - start_time
             iteration += 1
 
-        best_action = MCTS.select_ucb(self.tree.root)
+        best_action, best_child = MCTS.select_ucb(self.tree.root)
+        # NB: return subtree?
         return best_action
 
 
