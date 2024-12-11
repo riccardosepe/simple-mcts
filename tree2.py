@@ -77,6 +77,13 @@ class Tree:
         self._root = Tree.Node(None, 0, root_legal_actions, root_data)
         self._nodes = [self._root]
 
+    def __repr__(self):
+        s = ', '.join(map(str, self._nodes))
+        return f"Tree({s})"
+
+    def __getitem__(self, index):
+        return self._nodes[index]
+
     def insert_node(self, parent_id, action, legal_actions, node_data):
         parent = self._nodes[parent_id]
         new_node = Tree.Node(parent, len(self._nodes), legal_actions, node_data)
