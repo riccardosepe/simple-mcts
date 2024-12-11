@@ -101,7 +101,7 @@ class MCTS:
 
         start_time = time.time()
 
-        while elapsed_time < iterations_budget and iteration < time_budget:
+        while elapsed_time < time_budget and iteration < iterations_budget:
             self._plan_iteration()
             elapsed_time = time.time() - start_time
             iteration += 1
