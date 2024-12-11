@@ -14,24 +14,26 @@ def main():
     env = TicTacToeEnv()
 
     env.reset()
+    env.render()
 
     player = True
+    done = False
 
-    while True:
-        env.render()
-
+    while not done:
         if player:
             action = int(input("Insert an action: "))
+            while action not in env.legal_actions:
+                action = int(input("Illegal action. Insert another one: "))
             obs, _, done, _ = env.step(action)
         else:
             agent = MCTS(env)
-            action = agent.plan(iterations_budget=10)
+            action = agent.plan(iterations_budget=1000)
             obs, _, done, _ = env.step(action)
 
-        if done:
-            break
-
+        env.render()
         player = not player
+
+    print(env.game_result())
 
     
 if __name__ == '__main__':
