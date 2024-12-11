@@ -59,6 +59,7 @@ class TicTacToeEnv(gym.Env):
         self.mark = None
         self.board = None
         self.done = False
+        self.last_action = None
 
     def reset(self, **kwargs):
         self.board = [0] * NUM_LOC
@@ -79,6 +80,7 @@ class TicTacToeEnv(gym.Env):
             dict: Additional information
         """
         assert self.action_space.contains(action)
+        self.last_action = action
 
         loc = action
         if self.done:
@@ -125,6 +127,8 @@ class TicTacToeEnv(gym.Env):
             'board': self.board.copy(),
             'mark': self.mark,
             'done': self.done,
+            'last_action': self.last_action,
+            'reward': self.reward(),
         }
         return state
 
@@ -133,6 +137,7 @@ class TicTacToeEnv(gym.Env):
             self.board = checkpoint['board']
             self.mark = checkpoint['mark']
             self.done = checkpoint['done']
+            self.last_action = checkpoint['last_action']
         except KeyError:
             return False
         return True
