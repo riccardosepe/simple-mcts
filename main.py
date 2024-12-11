@@ -11,13 +11,12 @@ BOT = False
 def main():
     env = TicTacToeEnv()
 
-    obs = env.reset()
+    env.reset()
 
     player = True
 
     while True:
-        obs = np.array(obs[0]).reshape((3,3))
-        print(obs)
+        env.render()
 
         if player:
             action = int(input("Insert an action: "))
