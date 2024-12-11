@@ -86,7 +86,7 @@ class TicTacToeEnv(gym.Env):
             action (int): Location
 
         Returns:
-            list: Obeservation
+            list: Observation
             int: Reward
             bool: Done
             dict: Additional information
