@@ -8,7 +8,7 @@ from tree2 import Tree
 class MCTS:
     def __init__(self, transition_model):
         legal_actions = transition_model.legal_actions
-        self.tree = Tree(legal_actions)
+        self.tree = Tree(legal_actions, transition_model.backup())
         self.transition_model = transition_model
 
     def _select(self):
@@ -21,9 +21,12 @@ class MCTS:
 
     def _expand(self, node):
         random_action = node.random_action(exclude=True)
-        _, r, d, _ = self.transition_model.step(random_action)
-        new_node = self.tree.insert_node(node.id, random_action, self.transition_model.legal_actions)
-        return new_node, r, d
+        self.transition_model.step(random_action)
+        new_node = self.tree.insert_node(node.id,
+                                         random_action,
+                                         self.transition_model.legal_actions,
+                                         self.transition_model.backup())
+        return new_node
 
     def _simulate(self, node):
         ret = 0
