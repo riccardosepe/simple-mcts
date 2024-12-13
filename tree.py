@@ -137,13 +137,18 @@ class Tree:
         return new_node
 
     def delete_subtree(self, node):
+        self._delete_subtree(node)
+        del node.parent.children[node.action]
+        del self._nodes[node.id]
+
+    def _delete_subtree(self, node):
         if node.is_leaf:
             return
         for child_id in list(node.children):
             n = node.children[child_id]
             if n is None:
                 continue
-            self.delete_subtree(n)
+            self._delete_subtree(n)
             del node.children[child_id]
             del self._nodes[n.id]
 
@@ -157,8 +162,6 @@ class Tree:
                 continue
 
             self.delete_subtree(n)
-            del self._root.children[child_id]
-            del self._nodes[n.id]
 
         # At this point, I still have the root with only the selected child (`node`)
         del self._nodes[self._root.id]
@@ -166,7 +169,6 @@ class Tree:
         self._root = node
         self._root.set_root()
 
-        # NB: by construction, the root ought to be the node with the smallest id, i.e. the one in position 0
         assert self._root is self._nodes[self._root.id]
 
 
