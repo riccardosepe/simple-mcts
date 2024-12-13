@@ -94,7 +94,7 @@ class TicTacToeEnv(Env):
         self.board[action] = self.mark
 
         reward = self.reward()
-        if reward != 0:
+        if reward != 0 or self.draw():
             self.done = True
 
         self.mark = self.next_mark(self.mark)
@@ -128,14 +128,20 @@ class TicTacToeEnv(Env):
             return False
         return True
 
+    def draw(self):
+        try:
+            self.board.index(0)
+        except ValueError:
+            return True
+
+        return False
+
     def game_result(self):
         if self.done:
-            try:
-                self.board.index(0)
-            except ValueError:
+            if self.draw():
                 return "Draw"
-
-            return f"{self.next_mark(self.mark)} won"
+            else:
+                return f"{self.next_mark(self.mark)} won"
         else:
             return "Game still running"
 
