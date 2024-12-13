@@ -2,6 +2,7 @@
 This file contains all the code relative to a tree data structure
 """
 import random
+from functools import cmp_to_key
 
 
 class Tree:
@@ -42,6 +43,28 @@ class Tree:
             assert self.is_root
             self._available_actions.remove(action)
             del self._children[action]
+
+        @property
+        def best_child(self):
+            children_list = list(self._children.items())
+            return sorted(children_list, key=cmp_to_key(Tree.Node.node_cmp))[0]
+
+        @staticmethod
+        def node_cmp(this, other):
+            this = this[1]
+            other = other[1]
+            if this.visits > other.visits:
+                return -1
+            elif this.visits < other.visits:
+                return 1
+            else:
+                if this.score > other.score:
+                    return -1
+                elif this.score < other.score:
+                    return 1
+                else:
+                    # break ties randomly
+                    return random.choice([-1, 1])
 
         @property
         def id(self):
