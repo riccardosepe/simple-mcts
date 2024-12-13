@@ -7,7 +7,7 @@ from functools import cmp_to_key
 
 class Tree:
     class Node:
-        def __init__(self, parent_node, _id, legal_actions, game_data):
+        def __init__(self, parent_node, _id, legal_actions, game_data, action):
             self._id = _id
             self._children = dict.fromkeys(legal_actions, None)
             self._parent_node = parent_node
@@ -15,9 +15,10 @@ class Tree:
             self._visits = 0
             self._score = 0
             self._game_data = game_data
+            self._action = action
 
         def __repr__(self):
-            return f"Node(id={self._id}, visits={self._visits}, score={self._score})"
+            return f"Node(id={self._id}, visits={self._visits}, score={self._score}, action={self._action})"
 
         def add_child(self, child, action):
             # NB: this method is only meant to be used within the Tree class
@@ -110,11 +111,12 @@ class Tree:
         def game_reward(self):
             return self._game_data['reward']
 
-    """
-    NB: this tree is thought (for the moment) to support only environments with a maximum branching factor
-    """
+        @property
+        def action(self):
+            return self._action
+
     def __init__(self, root_legal_actions, root_data):
-        self._root = Tree.Node(None, 0, root_legal_actions, root_data)
+        self._root = Tree.Node(None, 0, root_legal_actions, root_data, None)
         self._nodes = {0: self._root}
         self._last_id = 0
 
@@ -129,7 +131,7 @@ class Tree:
         parent = self._nodes[parent_id]
         new_id = self._last_id + 1
         self._last_id = new_id
-        new_node = Tree.Node(parent, new_id, legal_actions, node_data)
+        new_node = Tree.Node(parent, new_id, legal_actions, node_data, action)
         parent.add_child(new_node, action)
         self._nodes[new_id] = new_node
         return new_node
