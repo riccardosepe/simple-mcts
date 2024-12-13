@@ -34,6 +34,15 @@ class Tree:
                 self._available_actions.remove(action)
             return action
 
+        def set_root(self):
+            assert self._parent_node is not None
+            self._parent_node = None
+
+        def ply(self, action):
+            assert self.is_root
+            self._available_actions.remove(action)
+            del self._children[action]
+
         @property
         def id(self):
             return self._id
@@ -98,6 +107,39 @@ class Tree:
         parent.add_child(new_node, action)
         self._nodes.append(new_node)
         return new_node
+
+    def delete_subtree(self, node):
+        if node.is_leaf:
+            return
+        for child_id in list(node.children):
+            n = node.children[child_id]
+            if n is None:
+                continue
+            self.delete_subtree(n)
+            del node.children[child_id]
+            del self._nodes[n.id]
+
+    def keep_subtree(self, node):
+        assert node in self._root.children.values()
+
+        # Delete the subtree relative to all the others children
+        for child_id in list(self._root.children):
+            n = self._root.children[child_id]
+            if n is node:
+                continue
+
+            self.delete_subtree(n)
+            del self._root.children[child_id]
+            del self._nodes[n.id]
+
+        # At this point, I still have the root with only the selected child (`node`)
+        del self._nodes[self._root.id]
+        del self._root
+        self._root = node
+        self._root.set_root()
+
+        # NB: by construction, the root ought to be the node with the smallest id, i.e. the one in position 0
+        assert self._root is self._nodes[self._root.id]
 
 
     def visualize(self):
