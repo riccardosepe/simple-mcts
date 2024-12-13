@@ -32,7 +32,7 @@ class MCTS:
         ret = 0
         while True:
             action = random.choice(self.transition_model.legal_actions)
-            _, r, d, _ = self.transition_model.step(action)
+            _, r, d, _, _ = self.transition_model.step(action)
             # sparse / non-sparse setting
             ret += r
             if d:

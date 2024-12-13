@@ -24,11 +24,11 @@ def main():
             action = int(input("Insert an action: "))
             while action not in env.legal_actions:
                 action = int(input("Illegal action. Insert another one: "))
-            obs, _, done, _ = env.step(action)
+            obs, _, done, _, _ = env.step(action)
         else:
             agent = MCTS(env)
             action = agent.plan(iterations_budget=1000)
-            obs, _, done, _ = env.step(action)
+            obs, _, done, _, _ = env.step(action)
 
         env.render()
         player = not player
