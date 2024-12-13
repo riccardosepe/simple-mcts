@@ -24,4 +24,13 @@ def test_delete_subtree():
 
 
 def test_keep_subtree():
-    assert False
+    tree = Tree([1, 2], {'name': 'root'})
+    child1 = tree.insert_node(0, 1, [7], {'name': 'child1'})
+    child2 = tree.insert_node(0, 2, [9], {'name': 'child2'})
+    child3 = tree.insert_node(child2.id, 9, [4], {'name': 'child3'})
+
+    tree.keep_subtree(child1)
+
+    assert len(tree._nodes) == 1
+    assert child1 in tree._nodes.values()
+    assert tree.root is child1
