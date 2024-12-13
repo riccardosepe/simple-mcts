@@ -1,132 +1,112 @@
-import gym
-from gym import spaces
+from itertools import permutations
 
-MAP = {0: ' ', 1: 'O', 2: 'X'}
-NUM_LOC = 9
-N = 3
-O_REWARD = 1
-X_REWARD = -1
-NO_REWARD = 0
+from gymnasium import spaces, Env
 
 
-def tocode(mark):
-    return 1 if mark == 'O' else 2
-
-def next_mark(mark):
-    return 'X' if mark == 'O' else 'O'
-
-def check_game_status(board):
-    """Return game status by current board status.
-
-    Args:
-        board (list): Current board state
-
-    Returns:
-        int:
-            -1: game in progress
-            0: draw game,
-            1 or 2 for finished game(winner mark code).
-    """
-    for t in [1, 2]:
-        for j in range(0, 9, 3):
-            if [t] * 3 == [board[i] for i in range(j, j+3)]:
-                return t
-        for j in range(0, 3):
-            if board[j] == t and board[j+3] == t and board[j+6] == t:
-                return t
-        if board[0] == t and board[4] == t and board[8] == t:
-            return t
-        if board[2] == t and board[4] == t and board[6] == t:
-            return t
-
-    for i in range(9):
-        if board[i] == 0:
-            # still playing
-            return -1
-
-    # draw game
-    return 0
-
-
-class TicTacToeEnv(gym.Env):
+class TicTacToeEnv(Env):
     metadata = {'render.modes': ['human']}
+    _agent_mark = 'X'
+    _human_mark = 'O'
+    _smart_board = [1, 6, 5, 8, 4, 0, 3, 2, 7]
+    _size = 9
+    _board_size = 3
 
-    def __init__(self, seed=None):
-        self.action_space = spaces.Discrete(NUM_LOC)
-        self.observation_space = spaces.Discrete(NUM_LOC)
-        self.start_mark = 'O'
-        self.reset(seed=seed)
-        self.mark = None
+    @staticmethod
+    def next_mark(mark):
+        return 'X' if mark == 'O' else 'O'
+
+    @staticmethod
+    def won(cells):
+        return any(sum(h) == 12 for h in permutations(cells, 3))
+
+    def __init__(self):
+        super(TicTacToeEnv, self).__init__()
+        self.action_space = spaces.Discrete(self._size)
+        self.observation_space = spaces.Discrete(self._size)
+
         self.board = None
         self.done = False
         self.last_action = None
+        self.mark = None
+
+    def __str__(self):
+        s = ''
+        for i in range(self._board_size):
+            for j in range(self._board_size):
+                v = self.board[3*i + j]
+                s += str(v) if v != 0 else ' '
+                if j < self._board_size - 1:
+                    s += '|'
+
+            s += '\n'
+
+            if i < self._board_size - 1:
+                s += '-' * (2 * self._board_size - 1)
+                s += '\n'
+
+        return s
+
+    @property
+    def observation(self):
+        return tuple(self.board), self.mark
+
+    @property
+    def legal_actions(self):
+        return [i for i, c in enumerate(self.board) if c == 0]
 
     def reset(self, **kwargs):
-        self.board = [0] * NUM_LOC
-        self.mark = self.start_mark
+        assert 'human_first' in kwargs
+        human_first = kwargs['human_first']
+
+        self.board = [0] * self._size
         self.done = False
+        self.last_action = None
+
+        # The idea here is to know who is the first player to place a piece on the board. If the first player is human,
+        # the first symbol is going to be `O`
+
+        if human_first:
+            self.mark = self._human_mark
+        else:
+            self.mark = self._agent_mark
+
+
         return self.observation
 
     def reward(self):
-        reward = NO_REWARD
-        status = check_game_status(self.board)
+        agent_places = {self._smart_board[i] for i in range(self._size) if self.board[i] == self._agent_mark}
+        human_places = {self._smart_board[i] for i in range(self._size) if self.board[i] == self._human_mark}
 
-        if status >= 0:
-            self.done = True
-            if status in [1, 2]:
-                # always called by self
-                reward = O_REWARD if self.mark == 'O' else X_REWARD
+        if self.won(agent_places):
+            return 1
+        elif self.won(human_places):
+            return -1
+        else:
+            return 0
 
-        return reward
-
-    def step(self, action):
-        """Step environment by action.
-
-        Args:
-            action (int): Location
-
-        Returns:
-            list: Observation
-            int: Reward
-            bool: Done
-            dict: Additional information
-        """
+    def step(self, action, human=False):
         assert self.action_space.contains(action)
         self.last_action = action
 
-        if self.done:
-            return self.observation, 0, True, None
+        assert not self.done
 
-        # place
-        self.board[action] = tocode(self.mark)
+        # place piece on the board
+        self.board[action] = self.mark
 
-        # calculate reward
         reward = self.reward()
+        if reward != 0:
+            self.done = True
 
-        # switch turn
-        self.mark = next_mark(self.mark)
-        return self.observation, reward, self.done, None
+        self.mark = self.next_mark(self.mark)
+        return self.observation, reward, self.done, None, {}
 
     def render(self, mode='human', close=False):
         if close:
             return
         if mode == 'human':
-            self._show_board(print)  # NOQA
-            print('')
+            print(self)
         else:
             raise RuntimeError
-
-    def _show_board(self, print_fn):
-        for i in range(N):
-            for j in range(N):
-                print_fn(MAP[self.board[3*i+j]], end='')
-
-                if j < N-1:
-                    print_fn('|', end='')
-                else:
-                    print_fn('')
-            if i < N-1:
-                print('-----')
 
     def backup(self):
         state = {
@@ -148,21 +128,32 @@ class TicTacToeEnv(gym.Env):
             return False
         return True
 
-    @property
-    def observation(self):
-        return tuple(self.board), self.mark
-
-    @property
-    def legal_actions(self):
-        return [i for i, c in enumerate(self.board) if c == 0]
-
     def game_result(self):
-        status = check_game_status(self.board)
-        if status == 0:
-            return "Draw"
-        elif status == 1:
-            return "O won"
-        elif status == 2:
-            return "X won"
+        if self.done:
+            try:
+                self.board.index(0)
+            except ValueError:
+                return "Draw"
+
+            return f"{self.next_mark(self.mark)} won"
         else:
-            raise ValueError
+            return "Game still running"
+
+
+
+def main():
+    env = TicTacToeEnv()
+    env.reset(human_first=True)
+    env.render()
+
+    done = False
+    while not done:
+        action = int(input('Action: '))
+        obs, rew, done, _, _ = env.step(action)
+        env.render()
+
+    print(env.game_result())
+
+
+if __name__ == '__main__':
+    main()
