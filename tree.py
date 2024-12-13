@@ -116,6 +116,7 @@ class Tree:
     def __init__(self, root_legal_actions, root_data):
         self._root = Tree.Node(None, 0, root_legal_actions, root_data)
         self._nodes = {0: self._root}
+        self._last_id = 0
 
     def __repr__(self):
         s = ', '.join(map(str, self._nodes))
@@ -126,7 +127,8 @@ class Tree:
 
     def insert_node(self, parent_id, action, legal_actions, node_data):
         parent = self._nodes[parent_id]
-        new_id = max(self._nodes.keys()) + 1
+        new_id = self._last_id + 1
+        self._last_id = new_id
         new_node = Tree.Node(parent, new_id, legal_actions, node_data)
         parent.add_child(new_node, action)
         self._nodes[new_id] = new_node
