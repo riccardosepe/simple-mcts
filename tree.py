@@ -99,6 +99,24 @@ class Tree:
         self._nodes.append(new_node)
         return new_node
 
+
+    def visualize(self):
+        self._visualize(self._root)
+
+    def _visualize(self, node, depth=0):
+        """
+        Recursively prints the structure of the tree starting from the given node.
+
+        :param node: The starting node for printing (usually the root node).
+        :param depth: The current depth of the node, used for indentation.
+        """
+        indent = "  " * depth
+        print(f"{indent}Node({node.id}): Actions -> {[n for n in node.children.values() if n is not None]}")
+
+        for action, child in node.children.items():
+            if child is not None:
+                self._visualize(child, depth + 1)
+
     @property
     def root(self):
         return self._root
