@@ -17,7 +17,7 @@ class Tree:
             self._game_data = game_data
 
         def __repr__(self):
-            return f"Node({self._id})"
+            return f"Node(id={self._id}, visits={self._visits}, score={self._score})"
 
         def add_child(self, child, action):
             # NB: this method is only meant to be used within the Tree class
