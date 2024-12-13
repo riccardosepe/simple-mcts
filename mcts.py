@@ -14,9 +14,8 @@ class MCTS:
     def _select(self):
         node = self.tree.root
         while not node.is_leaf and node.is_fully_expanded:
-            action, node = self.select_ucb(node)
-            # TODO: do i need the output of step?
-            self.transition_model.step(action)
+            node = self.select_ucb(node)
+            self.transition_model.step(node.action)
         return node
 
     def _expand(self, node):
@@ -139,4 +138,4 @@ class MCTS:
     def select_ucb(parent):
         scores = [(idx, MCTS._ucb(node, parent)) for idx, node in parent.children.items()]
         best_action = max(scores, key=lambda x: x[1])[0]
-        return best_action, parent.children[best_action]
+        return parent.children[best_action]
