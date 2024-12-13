@@ -183,7 +183,7 @@ class Tree:
         :param depth: The current depth of the node, used for indentation.
         """
         indent = "  " * depth
-        print(f"{indent}Node({node.id}): Actions -> {[n for n in node.children.values() if n is not None]}")
+        print(f"{indent}{node}: Actions -> {[n for n in node.children.values() if n is not None]}")
 
         for action, child in node.children.items():
             if child is not None:
