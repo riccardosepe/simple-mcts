@@ -92,7 +92,7 @@ class Tree:
     """
     def __init__(self, root_legal_actions, root_data):
         self._root = Tree.Node(None, 0, root_legal_actions, root_data)
-        self._nodes = [self._root]
+        self._nodes = {0: self._root}
 
     def __repr__(self):
         s = ', '.join(map(str, self._nodes))
@@ -103,9 +103,10 @@ class Tree:
 
     def insert_node(self, parent_id, action, legal_actions, node_data):
         parent = self._nodes[parent_id]
-        new_node = Tree.Node(parent, len(self._nodes), legal_actions, node_data)
+        new_id = max(self._nodes.keys()) + 1
+        new_node = Tree.Node(parent, new_id, legal_actions, node_data)
         parent.add_child(new_node, action)
-        self._nodes.append(new_node)
+        self._nodes[new_id] = new_node
         return new_node
 
     def delete_subtree(self, node):
