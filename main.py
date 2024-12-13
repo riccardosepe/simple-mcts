@@ -12,11 +12,14 @@ SEED = 0
 
 def main():
     env = TicTacToeEnv()
+    player = True
 
-    env.reset()
+    env.reset(human_first=player)
+
+    agent = MCTS(env)
+
     env.render()
 
-    player = True
     done = False
 
     while not done:
@@ -26,8 +29,8 @@ def main():
                 action = int(input("Illegal action. Insert another one: "))
             obs, _, done, _, _ = env.step(action)
         else:
-            agent = MCTS(env)
-            action = agent.plan(iterations_budget=1000)
+            # NB: iterations_budget < 81 might create problems
+            action = agent.plan(iterations_budget=100)
             obs, _, done, _, _ = env.step(action)
 
         env.render()
