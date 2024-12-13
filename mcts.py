@@ -107,9 +107,15 @@ class MCTS:
             iteration += 1
 
         best_action, best_child = MCTS.select_ucb(self.tree.root)
-        # NB: return subtree?
+        self.tree.keep_subtree(best_child)
         return best_action
 
+    def opponent_action(self, action):
+        if self.tree.root.is_leaf:
+            self.tree.root.ply(action)
+        else:
+            new_root = self.tree.root.children[action]
+            self.tree.keep_subtree(new_root)
 
     @staticmethod
     def _ucb(node, parent, c=0.1):
