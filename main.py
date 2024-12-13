@@ -28,6 +28,7 @@ def main():
             while action not in env.legal_actions:
                 action = int(input("Illegal action. Insert another one: "))
             obs, _, done, _, _ = env.step(action)
+            agent.opponent_action(action)
         else:
             # NB: iterations_budget < 81 might create problems
             action = agent.plan(iterations_budget=100)
