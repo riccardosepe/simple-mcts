@@ -155,9 +155,9 @@ class Tree:
     def keep_subtree(self, node):
         assert node in self._root.children.values()
 
-        # Delete the subtree relative to all the others children
-        for child_id in list(self._root.children):
-            n = self._root.children[child_id]
+        # Delete the subtree relative to all the other children
+        for action in list(self._root.children):
+            n = self._root.children[action]
             if n is node:
                 continue
 
