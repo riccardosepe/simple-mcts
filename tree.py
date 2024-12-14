@@ -23,6 +23,7 @@ class Tree:
         def add_child(self, child):
             # NB: this method is only meant to be used within the Tree class
             self._children[child.action] = child
+            self._available_actions.remove(child.action)
 
         def visit(self):
             self._visits += 1
@@ -30,10 +31,8 @@ class Tree:
         def increase_score(self, score):
             self._score += score
 
-        def random_action(self, exclude=False):
+        def random_action(self):
             action = random.choice(self._available_actions)
-            if exclude:
-                self._available_actions.remove(action)
             return action
 
         def set_root(self):
@@ -130,7 +129,7 @@ class Tree:
         new_id = self._last_id + 1
         self._last_id = new_id
         new_node = Tree.Node(parent, new_id, legal_actions, node_data, action)
-        parent.add_child(new_node, action)
+        parent.add_child(new_node)
         self._nodes[new_id] = new_node
         return new_node
 
