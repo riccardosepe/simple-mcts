@@ -105,9 +105,9 @@ class MCTS:
             elapsed_time = time.time() - start_time
             iteration += 1
 
-        best_action, best_child = self.tree.root.best_child
+        best_child = self.tree.root.best_child
         self.tree.keep_subtree(best_child)
-        return best_action
+        return best_child.action
 
     def opponent_action(self, action):
         if self.tree.root.is_leaf:
