@@ -20,9 +20,9 @@ class Tree:
         def __repr__(self):
             return f"Node(id={self._id}, visits={self._visits}, score={self._score}, action={self._action})"
 
-        def add_child(self, child, action):
+        def add_child(self, child):
             # NB: this method is only meant to be used within the Tree class
-            self._children[action] = child
+            self._children[child.action] = child
 
         def visit(self):
             self._visits += 1
