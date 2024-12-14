@@ -47,13 +47,11 @@ class Tree:
 
         @property
         def best_child(self):
-            children_list = list(self._children.items())
+            children_list = list(self._children.values())
             return sorted(children_list, key=cmp_to_key(Tree.Node.node_cmp))[0]
 
         @staticmethod
         def node_cmp(this, other):
-            this = this[1]
-            other = other[1]
             if this.visits > other.visits:
                 return -1
             elif this.visits < other.visits:
