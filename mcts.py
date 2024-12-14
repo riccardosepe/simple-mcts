@@ -19,7 +19,7 @@ class MCTS:
         return node
 
     def _expand(self, node):
-        random_action = node.random_action(exclude=True)
+        random_action = node.random_action()
         self.transition_model.step(random_action)
         new_node = self.tree.insert_node(node.id,
                                          random_action,
