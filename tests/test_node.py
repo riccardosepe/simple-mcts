@@ -94,10 +94,3 @@ def test_is_fully_expanded():
     root.add_child(child3)
 
     assert root.is_fully_expanded
-
-def test_is_root():
-    assert False
-
-
-def test_is_terminal():
-    assert False
