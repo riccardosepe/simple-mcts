@@ -1,26 +1,33 @@
-def test__select():
-    assert False
+from unittest import TestCase
+import unittest
+
+from mcts import MCTS
+from tictactoe_env import TicTacToeEnv
 
 
-def test__expand():
-    assert False
+class TestMCTS(TestCase):
+
+    def test_plan(self):
+        env = TicTacToeEnv()
+
+        env.reset(human_first=True)
+
+        # build the following grid
+        # O| |O
+        #  |X|
+        #  | |
+
+        env.step(0)
+        env.step(4)
+        env.step(2)
+
+        agent = MCTS(env)
+
+        action = agent.plan(iterations_budget=1000)
+
+        assert action == 1
 
 
-def test__simulate():
-    assert False
 
-
-def test__backpropagate():
-    assert False
-
-
-def test__plan_iteration():
-    assert False
-
-
-def test_plan():
-    assert False
-
-
-def test_opponent_action():
-    assert False
+if __name__ == '__main__':
+    unittest.main()
