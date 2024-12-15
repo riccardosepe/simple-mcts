@@ -55,6 +55,8 @@ class TicTacToeEnv(Env):
         return [i for i, c in enumerate(self.board) if c == 0]
 
     def reset(self, **kwargs):
+        if 'seed' in kwargs:
+            super(TicTacToeEnv, self).reset(seed=kwargs['seed'])
         assert 'human_first' in kwargs
         human_first = kwargs['human_first']
 
