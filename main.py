@@ -23,13 +23,13 @@ def main():
     done = False
 
     while not done:
-        if player:
+        if player is HUMAN:
             action = int(input("Insert an action: "))
             while action not in env.legal_actions:
                 action = int(input("Illegal action. Insert another one: "))
             obs, _, done, _, _ = env.step(action)
             agent.opponent_action(action)
-        else:
+        elif player is BOT:
             # NB: iterations_budget < b^2 might create problems (b is the branching factor)
             # TODO: handle cases with iterations_budget < 81?
             action = agent.plan(iterations_budget=1000)
