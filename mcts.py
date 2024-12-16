@@ -6,10 +6,12 @@ from tree import Tree
 
 
 class MCTS:
-    def __init__(self, transition_model):
+    def __init__(self, transition_model, seed=None):
         legal_actions = transition_model.legal_actions
         self.tree = Tree(legal_actions, transition_model.backup())
         self.transition_model = transition_model
+        random.seed(seed)
+        np.random.seed(seed)
 
     def _select(self):
         node = self.tree.root

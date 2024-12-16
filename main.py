@@ -16,7 +16,7 @@ def main():
 
     env.reset(human_first=player)
 
-    agent = MCTS(env)
+    agent = MCTS(env, seed=SEED)
 
     env.render()
 
@@ -42,7 +42,5 @@ def main():
 
     
 if __name__ == '__main__':
-    random.seed(SEED)
-    np.random.seed(SEED)
     main()
    
