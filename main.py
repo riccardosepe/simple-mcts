@@ -28,7 +28,7 @@ def main():
         elif player is BOT:
             # NB: iterations_budget < b^2 might create problems (b is the branching factor)
             # TODO: handle cases with iterations_budget < 81?
-            action = agent.plan(iterations_budget=1000)
+            action = agent.plan(iterations_budget=100)
             obs, _, done, _, _ = env.step(action)
 
         env.render()
