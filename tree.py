@@ -18,7 +18,7 @@ class Tree:
             self._action = action
 
         def __repr__(self):
-            return f"Node(id={self._id}, visits={self._visits}, score={self._score}, action={self._action})"
+            return f"{'Human' if self.player == -1 else 'Agent'}(id={self._id}, visits={self._visits}, score={self._score}, action={self._action})"
 
         def add_child(self, child):
             # NB: this method is only meant to be used within the Tree class
