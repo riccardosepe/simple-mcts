@@ -8,7 +8,7 @@ SEED = 0
 
 def main():
     env = TicTacToeEnv()
-    player = True
+    player = BOT
 
     env.reset(human_first=player)
 
