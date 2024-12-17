@@ -26,11 +26,11 @@ class TestNode(TestCase):
         assert node.visits == visits + 1
 
 
-    def test_increase_score(self):
+    def test_update_score(self):
         node = Node(None, 1, [2], {'name': 'node'}, 1)
 
         score = node.score
-        node.increase_score(1)
+        node.update_score(1)
         assert node.score == score + 1
 
 
