@@ -13,7 +13,7 @@ class TicTacToeEnv(Env):
 
     @staticmethod
     def next_mark(mark):
-        return 'X' if mark == 'O' else 'O'
+        return TicTacToeEnv._agent_mark if mark is TicTacToeEnv._human_mark else TicTacToeEnv._human_mark
 
     @staticmethod
     def won(cells):
