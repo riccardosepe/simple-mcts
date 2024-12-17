@@ -113,6 +113,11 @@ class Tree:
         def action(self):
             return self._action
 
+        @property
+        def player(self):
+            # TODO: FIND A BETTER SOLUTION FOR THIS
+            return self._game_data['player']
+
     def __init__(self, root_legal_actions, root_data):
         self._root = Tree.Node(None, 0, root_legal_actions, root_data, None)
         self._nodes = {0: self._root}
