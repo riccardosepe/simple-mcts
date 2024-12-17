@@ -119,7 +119,7 @@ class MCTS:
             self.tree.keep_subtree(new_root)
 
     @staticmethod
-    def _ucb(node, parent, c=np.sqrt(2)/2):
+    def _ucb(node, parent, c=np.sqrt(2)):
         """
         Calculates the Upper Confidence Bound for a tree.
         :param node: the node for which it calculates the UCB
