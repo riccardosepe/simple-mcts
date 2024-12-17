@@ -43,7 +43,7 @@ class MCTS:
     def _backpropagate(self, node, score):
         while node is not None:
             node.visit()
-            node.increase_score(score)
+            node.update_score(score)
             node = node.parent
 
     def _plan_iteration(self):

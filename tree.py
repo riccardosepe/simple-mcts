@@ -28,8 +28,9 @@ class Tree:
         def visit(self):
             self._visits += 1
 
-        def increase_score(self, score):
-            self._score += score
+        def update_score(self, score):
+            # see the readme. A node has to keep its score with the sign needed by its parent node
+            self._score += score * -self.player
 
         def random_action(self):
             action = random.choice(self._available_actions)
