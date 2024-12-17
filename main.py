@@ -1,7 +1,3 @@
-import numpy as np
-import random
-
-from hanoi_env import TowersOfHanoiEnv
 from mcts import MCTS
 from tictactoe_env import TicTacToeEnv
 
