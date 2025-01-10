@@ -35,6 +35,7 @@ class MCTS:
             action = random.choice(self.transition_model.legal_actions)
             _, r, d, _, _ = self.transition_model.step(action)
             # sparse / non-sparse setting
+            # TODO: gamma?
             ret += r
             if d:
                 break
@@ -107,6 +108,7 @@ class MCTS:
             elapsed_time = time.time() - start_time
             iteration += 1
 
+        # TODO: NB: this best_child property should belong to MCTS rather than tree
         best_child = self.tree.root.best_child
         self.tree.keep_subtree(best_child)
         return best_child.action
