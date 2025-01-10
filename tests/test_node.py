@@ -27,7 +27,7 @@ class TestNode(TestCase):
 
 
     def test_update_score(self):
-        node = Node(None, 1, [2], {'name': 'node'}, 1)
+        node = Node(None, 1, [2], {'name': 'node', 'player': -1}, 1)
 
         score = node.score
         node.update_score(1)
