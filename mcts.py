@@ -49,11 +49,11 @@ class MCTS:
 
     def _backpropagate(self, node, score):
         node: Tree.Node
+        if node is None:
+            return
         node.update_score(score)
         node.visit()
-        if node.parent is None:
-            return
-        self._backpropagate(node.parent, score)
+        self._backpropagate(node.parent, -score)
 
     def _plan_iteration(self):
         """
@@ -85,7 +85,8 @@ class MCTS:
             score = selected_node.game_reward
 
         # 4. BACKPROPAGATE
-        self._backpropagate(terminal_node, score)
+        # see the readme. A node has to keep its score with the sign needed by its parent node
+        self._backpropagate(terminal_node, score * -terminal_node.player)
 
         # restore the game state
         self.transition_model.load(checkpoint)
