@@ -41,11 +41,19 @@ class MCTS:
                 break
         return ret
 
-    def _backpropagate(self, node, score):
+    def _backpropagate2(self, node, score):
         while node is not None:
             node.visit()
             node.update_score(score)
             node = node.parent
+
+    def _backpropagate(self, node, score):
+        node: Tree.Node
+        node.update_score(score)
+        node.visit()
+        if node.parent is None:
+            return
+        self._backpropagate(node.parent, score)
 
     def _plan_iteration(self):
         """
