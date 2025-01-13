@@ -1,11 +1,11 @@
 from itertools import permutations
 
-from gymnasium import spaces, Env
+from gymnasium import spaces
 
 from base_env import BaseEnv
 
 
-class TicTacToeEnv(BaseEnv, Env):
+class TicTacToeEnv(BaseEnv):
     metadata = {'render.modes': ['human']}
     _agent_mark = 'X'
     _human_mark = 'O'
