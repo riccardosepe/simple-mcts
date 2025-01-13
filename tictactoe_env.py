@@ -119,7 +119,7 @@ class TicTacToeEnv(BaseEnv):
             'done': self.done,
             'last_action': self.last_action,
             'reward': self.reward(),
-            'player': -1 if self.mark == self._human_mark else 1,
+            'player': 'Human' if self.mark == self._human_mark else 'Agent',
         }
         return state
 

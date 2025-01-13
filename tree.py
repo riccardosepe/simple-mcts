@@ -18,7 +18,7 @@ class Tree:
             self._action = action
 
         def __repr__(self):
-            return f"{'Human' if self.player == -1 else 'Agent'}(id={self._id}, visits={self._visits}, score={self._score}, action={self._action})"
+            return f"{self.player}(id={self._id}, visits={self._visits}, score={self._score}, action={self._action})"
 
         def add_child(self, child):
             # NB: this method is only meant to be used within the Tree class
@@ -29,8 +29,7 @@ class Tree:
             self._visits += 1
 
         def update_score(self, score):
-            # see the readme. A node has to keep its score with the sign needed by its parent node
-            self._score += score * -self.player
+            self._score += score
 
         def random_action(self):
             action = random.choice(self._available_actions)
@@ -115,7 +114,6 @@ class Tree:
 
         @property
         def player(self):
-            # TODO: FIND A BETTER SOLUTION FOR THIS
             return self._game_data['player']
 
     def __init__(self, root_legal_actions, root_data):
