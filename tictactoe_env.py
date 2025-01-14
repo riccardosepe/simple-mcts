@@ -21,6 +21,10 @@ class TicTacToeEnv(BaseEnv):
     def won(cells):
         return any(sum(h) == 12 for h in permutations(cells, 3))
 
+    @property
+    def adversarial(self):
+        return True
+
     def __init__(self):
         super(TicTacToeEnv, self).__init__()
         self.action_space = spaces.Discrete(self._size)

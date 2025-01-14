@@ -13,6 +13,11 @@ class BaseEnv(ABC, Env):
     def _last_action(self):
         pass
 
+    @property
+    @abstractmethod
+    def adversarial(self):
+        pass
+
     @abstractmethod
     def backup(self):
         # NB the data from the backup function can divide in two different categories

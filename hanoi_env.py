@@ -17,6 +17,10 @@ class TowersOfHanoiEnv(BaseEnv):
         'CB': 5
     }
 
+    @property
+    def adversarial(self):
+        return False
+
     def __init__(self, num_disks=3, num_pegs=3):
         """
         Initialize the Towers of Hanoi environment.
