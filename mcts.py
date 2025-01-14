@@ -6,10 +6,14 @@ from tree import Tree
 
 
 class MCTS:
-    def __init__(self, transition_model, seed=None):
+    def __init__(self,
+                 transition_model,
+                 adversarial=True,
+                 seed=None):
         legal_actions = transition_model.legal_actions
         self.tree = Tree(legal_actions, transition_model.backup())
         self.transition_model = transition_model
+        self.adversarial = adversarial
         random.seed(seed)
         np.random.seed(seed)
 
@@ -49,11 +53,15 @@ class MCTS:
 
     def _backpropagate(self, node, score):
         node: Tree.Node
+        if self.adversarial:
+            sign = -1
+        else:
+            sign = 1
         if node is None:
             return
         node.update_score(score)
         node.visit()
-        self._backpropagate(node.parent, -score)
+        self._backpropagate(node.parent, score*sign)
 
     def _plan_iteration(self):
         """
