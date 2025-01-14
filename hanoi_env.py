@@ -2,7 +2,6 @@ from copy import deepcopy
 
 import numpy as np
 from gymnasium.spaces import Discrete, Box
-from typing_extensions import override
 
 from base_env import BaseEnv
 
@@ -145,7 +144,6 @@ class TowersOfHanoiEnv(BaseEnv):
         return obs
 
     @property
-    @override
     def legal_actions(self):
         legal_actions = []
         for action in range(self.action_space.n):
@@ -154,7 +152,6 @@ class TowersOfHanoiEnv(BaseEnv):
         return legal_actions
 
     @property
-    @override
     def _last_action(self):
         return self._la
 
