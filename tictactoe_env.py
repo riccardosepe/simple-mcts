@@ -28,7 +28,7 @@ class TicTacToeEnv(BaseEnv):
 
         self.board = None
         self.done = False
-        self.last_action = None
+        self._la = None
         self.mark = None
 
     def __str__(self):
@@ -49,6 +49,10 @@ class TicTacToeEnv(BaseEnv):
         return s
 
     @property
+    def _last_action(self):
+        return self._la
+
+    @property
     def observation(self):
         return tuple(self.board), self.mark
 
@@ -64,7 +68,7 @@ class TicTacToeEnv(BaseEnv):
 
         self.board = [0] * self._size
         self.done = False
-        self.last_action = None
+        self._la = None
 
         # The idea here is to know who is the first player to place a piece on the board. If the first player is human,
         # the first symbol is going to be `O`
@@ -90,7 +94,7 @@ class TicTacToeEnv(BaseEnv):
 
     def step(self, action, human=False):
         assert self.action_space.contains(action)
-        self.last_action = action
+        self._la = action
 
         assert not self.done
 
@@ -113,11 +117,24 @@ class TicTacToeEnv(BaseEnv):
             raise RuntimeError
 
     def backup(self):
+        # NB the data from the backup function can divide in two different categories
+        # 1. the data related to the actual state of the game
+        #     - board
+        #     - mark (whose turn it is)
+        #     - done
+        #     - last_action
+        # 2. the metadata used by MCTS
+        #     - reward
+        #     - player
+        #
+        # In particular, the first category can be whatever because it is handled internally by the environment, while
+        # the second category must be as it is because it's used outside the class
+
         state = {
             'board': self.board.copy(),
             'mark': self.mark,
             'done': self.done,
-            'last_action': self.last_action,
+            'last_action': self._last_action,
             'reward': self.reward(),
             'player': 'Human' if self.mark == self._human_mark else 'Agent',
         }
@@ -128,7 +145,7 @@ class TicTacToeEnv(BaseEnv):
             self.board = checkpoint['board']
             self.mark = checkpoint['mark']
             self.done = checkpoint['done']
-            self.last_action = checkpoint['last_action']
+            self._la = checkpoint['last_action']
         except KeyError:
             return False
         return True
