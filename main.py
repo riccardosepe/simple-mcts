@@ -1,3 +1,4 @@
+from hanoi_env import TowersOfHanoiEnv
 from mcts import MCTS
 from tictactoe_env import TicTacToeEnv
 
@@ -8,11 +9,12 @@ SEED = 0
 
 def main():
     env = TicTacToeEnv()
+    env = TowersOfHanoiEnv(num_disks=3)
     player = BOT
 
     env.reset(human_first=player)
 
-    agent = MCTS(env, seed=SEED)
+    agent = MCTS(env, seed=SEED, adversarial=env.adversarial, gamma=0.95)
 
     env.render()
 
@@ -32,7 +34,8 @@ def main():
             obs, _, done, _, _ = env.step(action)
 
         env.render()
-        player = not player
+        if env.adversarial:
+            player = not player
 
     print(env.game_result())
 
