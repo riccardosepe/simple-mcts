@@ -9,11 +9,13 @@ class MCTS:
     def __init__(self,
                  transition_model,
                  adversarial=True,
+                 gamma=1,
                  seed=None):
         legal_actions = transition_model.legal_actions
         self.tree = Tree(legal_actions, transition_model.backup())
         self.transition_model = transition_model
         self.adversarial = adversarial
+        self.gamma = gamma
         random.seed(seed)
         np.random.seed(seed)
 
@@ -55,13 +57,15 @@ class MCTS:
         node: Tree.Node
         if self.adversarial:
             sign = -1
+            coeff = sign
         else:
             sign = 1
+            coeff = sign * self.gamma
         if node is None:
             return
         node.update_score(score)
         node.visit()
-        self._backpropagate(node.parent, score*sign)
+        self._backpropagate(node.parent, score * coeff)
 
     def _plan_iteration(self):
         """
