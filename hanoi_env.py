@@ -7,6 +7,9 @@ from base_env import BaseEnv
 
 
 class TowersOfHanoiEnv(BaseEnv):
+    """
+    NB: MCTS works on this with gamma=0.95, not 1 or 0.99
+    """
     metadata = {'render.modes': ['human']}
     action_dict = {
         'AB': 0,
