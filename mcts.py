@@ -94,7 +94,7 @@ class MCTS:
 
         # 4. BACKPROPAGATE
         # see the readme. A node has to keep its score with the sign needed by its parent node
-        sign = -1 if terminal_node.player == 'Agent' else 1
+        sign = -1 if terminal_node.player == 'Agent' and self.adversarial else 1
         self._backpropagate(terminal_node, score * sign)
 
         # restore the game state
