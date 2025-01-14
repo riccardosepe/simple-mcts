@@ -1,9 +1,13 @@
+from copy import deepcopy
+
 import numpy as np
-from gymnasium import Env
 from gymnasium.spaces import Discrete, Box
+from typing_extensions import override
+
+from base_env import BaseEnv
 
 
-class TowersOfHanoiEnv(Env):
+class TowersOfHanoiEnv(BaseEnv):
     metadata = {'render.modes': ['human']}
     action_dict = {
         'AB': 0,
@@ -31,16 +35,17 @@ class TowersOfHanoiEnv(Env):
         self.num_pegs = num_pegs
         # Action space: moving a disk from one peg to another
         # Represented as a tuple (from_peg, to_peg), encoded as a discrete action.
-        self.action_space = Discrete(num_pegs * (num_pegs-1))  # 3 pegs -> 3*2 = 6 possible moves
+        self.action_space: Discrete = Discrete(num_pegs * (num_pegs-1))  # 3 pegs -> 3*2 = 6 possible moves
 
         # Observation space: state of all three pegs
         self.observation_space = Box(
             low=0, high=self.num_disks, shape=(num_pegs, self.num_disks), dtype=np.int32
         )
-
-        self._base = '\t'.join([chr(i) for i in range(ord('A'), ord('A') + self.num_pegs)])
-
         self.done = False
+        self._la = None
+
+        self._printable_base = '\t'.join([chr(i) for i in range(ord('A'), ord('A') + self.num_pegs)])
+
 
     def reset(self, **kwargs):
         """
@@ -51,7 +56,18 @@ class TowersOfHanoiEnv(Env):
         """
         self.state = [list(range(self.num_disks, 0, -1)), [], []]  # All disks on the first peg
         self.done = False
+        self._la = None
         return self._get_observation()
+
+    def _legal_action(self, action):
+        from_peg = action // 2
+        to_peg = action % 2 + (1 if action % 2 >= from_peg else 0)
+
+        # nb: self.state[from_peg] can be empty, hence the `not`
+        if not self.state[from_peg] or (self.state[to_peg] and self.state[to_peg][-1] < self.state[from_peg][-1]):
+            return False
+
+        return True
 
     def step(self, action):
         """
@@ -79,12 +95,12 @@ class TowersOfHanoiEnv(Env):
         from_peg = action // 2
         to_peg = action % 2 + (1 if action % 2 >= from_peg else 0)
 
-        if not self.state[from_peg]:
-            return self._get_observation(), -1.0, self.done, {"error": "Invalid move"}
+        if not self._legal_action(action):
+            return self._get_observation(), -1.0, self.done, None, {"error": "Invalid move"}
+
+        self._la = action
 
         disk = self.state[from_peg][-1]
-        if self.state[to_peg] and self.state[to_peg][-1] < disk:
-            return self._get_observation(), -1.0, self.done, {"error": "Invalid move"}
 
         # Perform the move
         self.state[from_peg].pop()
@@ -93,8 +109,7 @@ class TowersOfHanoiEnv(Env):
         # Check if the puzzle is solved
         self.done = len(self.state[2]) == self.num_disks
 
-        reward = 1.0 if self.done else 0.0
-        return self._get_observation(), reward, self.done, {}
+        return self._get_observation(), self.reward(), self.done, None, {}
 
     def render(self, mode='human'):
         """
@@ -107,7 +122,7 @@ class TowersOfHanoiEnv(Env):
         for row in range(self.num_disks):
             print('\t'.join(peg[row] for peg in pegs))
 
-        print(self._base)
+        print(self._printable_base)
         print('-' * 10)
 
     def close(self):
@@ -128,6 +143,45 @@ class TowersOfHanoiEnv(Env):
             for j, disk in enumerate(reversed(peg)):
                 obs[i, j] = disk
         return obs
+
+    @property
+    @override
+    def legal_actions(self):
+        legal_actions = []
+        for action in range(self.action_space.n):
+            if self._legal_action(action):
+                legal_actions.append(action)
+        return legal_actions
+
+    @property
+    @override
+    def _last_action(self):
+        return self._la
+
+
+    def backup(self):
+        checkpoint = {
+            'state': deepcopy(self.state),
+            'last_action': self._last_action,
+            'done': self.done,
+            'player': 'Agent',
+            'reward': self.reward()
+        }
+        return checkpoint
+
+    def load(self, checkpoint):
+        self.state = checkpoint['state']
+        self._la = checkpoint['last_action']
+        self.done = checkpoint['done']
+
+    def game_result(self):
+        if self.done:
+            return "You made it!"
+        else:
+            return "Game still running"
+
+    def reward(self):
+        return 1.0 if self.done else 0.0
 
 
 # Example usage
