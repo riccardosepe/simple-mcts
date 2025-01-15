@@ -26,6 +26,7 @@ class BaseEnv(ABC):
         #     - done
         #     - last_action
         # 2. the metadata used by MCTS
+        #     - done
         #     - reward
         #     - player
         #
