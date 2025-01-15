@@ -1,3 +1,4 @@
+from envs.frozenlake_env import MyFrozenLakeEnv
 from envs.hanoi_env import TowersOfHanoiEnv
 from src.mcts import MCTS
 from envs.tictactoe_env import TicTacToeEnv
@@ -10,11 +11,13 @@ SEED = 0
 def main():
     env = TicTacToeEnv()
     env = TowersOfHanoiEnv(num_disks=3)
+    env = MyFrozenLakeEnv(render_mode='human', is_slippery=False)
     player = BOT
 
-    env.reset(human_first=player)
+    env.reset()
+    # env.reset(human_first=player)
 
-    agent = MCTS(env, seed=SEED, adversarial=env.adversarial, gamma=0.95)
+    agent = MCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1)
 
     env.render()
 
