@@ -1,8 +1,7 @@
-from gymnasium import Env
 from abc import ABC, abstractmethod
 
 
-class BaseEnv(ABC, Env):
+class BaseEnv(ABC):
     @property
     @abstractmethod
     def legal_actions(self):

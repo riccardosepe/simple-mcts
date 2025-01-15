@@ -1,4 +1,5 @@
 from copy import deepcopy
+from gymnasium import Env
 
 import numpy as np
 from gymnasium.spaces import Discrete, Box
@@ -6,7 +7,7 @@ from gymnasium.spaces import Discrete, Box
 from .base_env import BaseEnv
 
 
-class TowersOfHanoiEnv(BaseEnv):
+class TowersOfHanoiEnv(BaseEnv, Env):
     """
     NB: MCTS works on this with gamma=0.95, not 1 or 0.99
     """
