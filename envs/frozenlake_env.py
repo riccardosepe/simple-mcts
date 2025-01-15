@@ -8,6 +8,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         super().__init__(*args, **kwargs)
         self._last_reward = None
         self.done = False
+        self.lastaction = None
 
     def reset(self, *args, **kwargs):
         self._last_reward = None
