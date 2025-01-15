@@ -45,6 +45,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
             'reward': self.reward(),
             'player': 'Agent'
         }
+        return checkpoint
 
     def load(self, checkpoint):
         try:
