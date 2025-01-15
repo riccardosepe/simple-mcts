@@ -1,6 +1,6 @@
-from hanoi_env import TowersOfHanoiEnv
-from mcts import MCTS
-from tictactoe_env import TicTacToeEnv
+from envs.hanoi_env import TowersOfHanoiEnv
+from src.mcts import MCTS
+from envs.tictactoe_env import TicTacToeEnv
 
 HUMAN = True
 BOT = False
