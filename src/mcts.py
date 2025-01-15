@@ -2,7 +2,7 @@ import random
 import time
 
 import numpy as np
-from tree import Tree
+from src.tree import Tree
 
 
 class MCTS:
