@@ -21,7 +21,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
 
     @property
     def _last_action(self):
-        return super().lastaction
+        return self.lastaction
 
     def step(self, a):
         s, r, d, t, i = super().step(a)
@@ -44,8 +44,8 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
 
     def load(self, checkpoint):
         try:
-            super().s = checkpoint['state']
-            super().lastaction = checkpoint['last_action']
+            self.s = checkpoint['state']
+            self.lastaction = checkpoint['last_action']
             self._last_reward = checkpoint['reward']
             self.done = checkpoint['done']
         except KeyError:
@@ -56,7 +56,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         if not self.done:
             return "Game still running"
         else:
-            if super().desc.flatten()[super().s] == b'G':
+            if self.desc.flatten()[self.s] == b'G':
                 return "You made it!"
             else:
                 return "You fell into an ice pit :("
