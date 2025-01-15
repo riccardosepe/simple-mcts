@@ -3,7 +3,7 @@ from copy import deepcopy
 import numpy as np
 from gymnasium.spaces import Discrete, Box
 
-from base_env import BaseEnv
+from .base_env import BaseEnv
 
 
 class TowersOfHanoiEnv(BaseEnv):

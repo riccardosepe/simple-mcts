@@ -2,7 +2,7 @@ from itertools import permutations
 
 from gymnasium import spaces
 
-from base_env import BaseEnv
+from .base_env import BaseEnv
 
 
 class TicTacToeEnv(BaseEnv):
