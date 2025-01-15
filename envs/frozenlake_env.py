@@ -4,8 +4,8 @@ from envs.base_env import BaseEnv
 
 
 class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self._last_reward = None
         self.done = False
 
