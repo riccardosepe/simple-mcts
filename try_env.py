@@ -1,11 +1,10 @@
-import gymnasium as gym
-
+from envs.frozenlake_env import MyFrozenLakeEnv
 
 SEED = 0
 
 
 def main():
-    env = gym.make('FrozenLake-v1', desc=None, map_name="4x4", is_slippery=False, render_mode='human')
+    env = MyFrozenLakeEnv(render_mode='human', is_slippery=False)
 
     env.reset()
     env.render()
@@ -14,12 +13,14 @@ def main():
 
     while not done:
         action = int(input("Insert an action: "))
-        obs, _, done, _, _ = env.step(action)
+        obs, r, done, _, _ = env.step(action)
+
+        print("Got reward ", r)
 
         env.render()
 
 
-    # print(env.game_result())
+    print(env.game_result())
 
     
 if __name__ == '__main__':
