@@ -10,12 +10,15 @@ class MCTS:
                  transition_model,
                  adversarial=True,
                  gamma=1,
+                 keep_subtree=True,
                  seed=None):
         legal_actions = transition_model.legal_actions
         self.tree = Tree(legal_actions, transition_model.backup())
         self.transition_model = transition_model
         self.adversarial = adversarial
         self.gamma = gamma
+        self._keep_subtree = keep_subtree
+
         random.seed(seed)
         np.random.seed(seed)
 
@@ -132,8 +135,15 @@ class MCTS:
 
         # TODO: NB: this best_child property should belong to MCTS rather than tree
         best_child = self.tree.root.best_child
-        self.tree.keep_subtree(best_child)
-        return best_child.action
+        if self._keep_subtree:
+            self.tree.keep_subtree(best_child)
+            return best_child.action
+        else:
+            del self.tree
+            return best_child.action
+
+    def init_tree(self, legal_actions, root_data):
+        self.tree = Tree(root_legal_actions=legal_actions, root_data=root_data)
 
     def opponent_action(self, action):
         if self.tree.root.is_leaf:
