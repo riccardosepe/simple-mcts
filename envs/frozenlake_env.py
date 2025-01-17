@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from gymnasium.envs.toy_text import FrozenLakeEnv
 
 from envs.base_env import BaseEnv
@@ -54,7 +56,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
 
     def backup(self):
         checkpoint = {
-            'state': self.s,
+            'state': deepcopy(self.s),
             'last_action': self._last_action,
             'done': self.done,
             'reward': self.reward(),
@@ -63,14 +65,10 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         return checkpoint
 
     def load(self, checkpoint):
-        try:
-            self.s = checkpoint['state']
-            self.lastaction = checkpoint['last_action']
-            self._last_reward = checkpoint['reward']
-            self.done = checkpoint['done']
-        except KeyError:
-            return False
-        return True
+        self.s = checkpoint['state']
+        self.lastaction = checkpoint['last_action']
+        self._last_reward = checkpoint['reward']
+        self.done = checkpoint['done']
 
     def game_result(self):
         if not self.done:
