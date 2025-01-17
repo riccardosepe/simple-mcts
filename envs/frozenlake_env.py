@@ -17,7 +17,22 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
 
     @property
     def legal_actions(self):
-        return list(range(4))
+        # NB:
+        # - 0: Move left
+        # - 1: Move down
+        # - 2: Move right
+        # - 3: Move up
+        i, j = self.s // self.ncol, self.s % self.ncol
+        actions = []
+        if i > 0:
+            actions.append(3)
+        if i < self.nrow - 1:
+            actions.append(1)
+        if j > 0:
+            actions.append(0)
+        if j < self.ncol - 1:
+            actions.append(2)
+        return actions
 
     @property
     def _last_action(self):
