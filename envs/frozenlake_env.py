@@ -18,7 +18,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         return super().reset(*args, **kwargs)
 
     @property
-    def legal_actions(self):
+    def legal_actions_old(self):
         # NB:
         # - 0: Move left
         # - 1: Move down
@@ -35,6 +35,10 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         if j < self.ncol - 1:
             actions.append(2)
         return actions
+
+    @property
+    def legal_actions(self):
+        return list(range(4))
 
     @property
     def _last_action(self):
