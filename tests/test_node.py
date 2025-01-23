@@ -1,10 +1,9 @@
 import unittest
 
-from src.tree.tree import Tree
+from src import Node
 from unittest import TestCase
 
 
-Node = Tree.Node
 
 class TestNode(TestCase):
 
