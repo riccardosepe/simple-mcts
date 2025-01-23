@@ -83,3 +83,21 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
 
     def reward(self):
         return self._last_reward
+
+    def next_states(self, action):
+        # TODO: is this logic ok here?
+        i, j = self.s // self.ncol, self.s % self.ncol
+
+        def to_s(ii, jj):
+            return ii*self.ncol + jj
+
+        states = {
+            1: to_s(max(i-1, 0), j),
+            3: to_s(min(i+1, self.nrow-1), j),
+            2: to_s(i, max(j-1, 0)),
+            0: to_s(i, min(j+1, self.ncol-1)),
+        }
+
+        del states[action]
+        return list(states.values())
+

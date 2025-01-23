@@ -42,6 +42,8 @@ class ChanceMCTS(MCTS):
                                                 action=random_action,
                                                 legal_actions=None,  # TODO: is this ok?
                                                 node_data=None)  # TODO: is this ok?
+                                                legal_actions=self.transition_model.next_states(random_action),  # TODO: is this ok?
+                                                node_data=None,
 
         new_choice_node = self.tree.insert_node(new_chance_node.id,
                                                 action=s,
