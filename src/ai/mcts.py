@@ -2,7 +2,7 @@ import random
 import time
 
 import numpy as np
-from src.tree.tree import Tree
+from src.tree.tree import Tree, Node
 
 
 class MCTS:
@@ -70,15 +70,16 @@ class MCTS:
             node = node.parent
 
     def _backpropagate(self, node, score):
-        node: Tree.Node
+        if node is None:
+            return
+        node: Node
         if self.adversarial:
             sign = -1
             coeff = sign
         else:
             sign = 1
             coeff = sign * self.gamma
-        if node is None:
-            return
+
         node.update_score(score)
         node.visit()
         self._backpropagate(node.parent, score * coeff)
