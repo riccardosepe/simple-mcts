@@ -93,12 +93,15 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
             return ii*self.ncol + jj
 
         states = {
-            1: to_s(max(i-1, 0), j),
-            3: to_s(min(i+1, self.nrow-1), j),
-            2: to_s(i, max(j-1, 0)),
-            0: to_s(i, min(j+1, self.ncol-1)),
+            1: to_s(max(i - 1, 0), j),
+            3: to_s(min(i + 1, self.nrow - 1), j),
+            2: to_s(i, max(j - 1, 0)),
+            0: to_s(i, min(j + 1, self.ncol - 1)),
         }
+        if self.is_slippery:
+            del states[action]
+            return list(states.values())
 
-        del states[action]
-        return list(states.values())
+        else:
+            return [states[(action+2)%4]]
 
