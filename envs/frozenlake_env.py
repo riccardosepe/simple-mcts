@@ -11,6 +11,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self._last_reward = None
         self.done = False
         self.lastaction = None
+        self.is_slippery = kwargs.get('is_slippery', False)
 
     def reset(self, *args, **kwargs):
         self._last_reward = None
