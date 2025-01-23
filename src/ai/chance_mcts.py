@@ -40,16 +40,15 @@ class ChanceMCTS(MCTS):
 
         new_chance_node = self.tree.insert_node(node.id,
                                                 action=random_action,
-                                                legal_actions=None,  # TODO: is this ok?
-                                                node_data=None)  # TODO: is this ok?
                                                 legal_actions=self.transition_model.next_states(random_action),  # TODO: is this ok?
                                                 node_data=None,
+                                                chance=True)  # TODO: is this ok?
 
         new_choice_node = self.tree.insert_node(new_chance_node.id,
                                                 action=s,
                                                 legal_actions=self.transition_model.legal_actions,
-                                                node_data=self.transition_model.backup()
-                                                )
+                                                node_data=self.transition_model.backup(),
+                                                chance=False)
         self.t += 1
 
         return new_choice_node
