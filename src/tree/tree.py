@@ -117,8 +117,12 @@ class Node:
 
 class Tree:
 
+    @staticmethod
+    def create_root(root_legal_actions, root_data):
+        return Node(None, 0, root_legal_actions, root_data, None)
+
     def __init__(self, root_legal_actions, root_data):
-        self._root = Node(None, 0, root_legal_actions, root_data, None)
+        self._root = self.create_root(root_legal_actions, root_data)
         self._nodes = {0: self._root}
         self._last_id = 0
 
