@@ -133,7 +133,7 @@ class Tree:
     def __getitem__(self, index):
         return self._nodes[index]
 
-    def insert_node(self, parent_id, action, legal_actions, node_data):
+    def insert_node(self, parent_id, action, legal_actions, node_data, **kwargs):
         parent = self._nodes[parent_id]
         new_id = self._last_id + 1
         self._last_id = new_id
