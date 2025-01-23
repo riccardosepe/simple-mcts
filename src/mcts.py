@@ -11,6 +11,7 @@ class MCTS:
                  adversarial=True,
                  gamma=1,
                  keep_subtree=True,
+                 max_depth=1000,
                  seed=None):
         legal_actions = transition_model.legal_actions
         self.tree = Tree(legal_actions, transition_model.backup())
@@ -18,6 +19,9 @@ class MCTS:
         self.adversarial = adversarial
         self.gamma = gamma
         self._keep_subtree = keep_subtree
+        self._max_depth = max_depth
+
+        self.t = None
 
         random.seed(seed)
         np.random.seed(seed)
@@ -27,6 +31,7 @@ class MCTS:
         while not node.is_leaf and node.is_fully_expanded:
             node = self.select_ucb(node)
             self.transition_model.step(node.action)
+            self.t += 1
         return node
 
     def _expand(self, node):
@@ -36,16 +41,21 @@ class MCTS:
                                          random_action,
                                          self.transition_model.legal_actions,
                                          self.transition_model.backup())
+        self.t += 1
+
         return new_node
 
-    def _simulate(self, node):
+    def _evaluate(self):
         ret = 0
         while True:
             action = random.choice(self.transition_model.legal_actions)
             _, r, d, _, _ = self.transition_model.step(action)
             # sparse / non-sparse setting
-            # TODO: gamma?
             ret += r
+            self.t += 1
+            if self.t >= self._max_depth:
+                ret = 0
+                break
             if d:
                 break
         return ret
@@ -76,6 +86,8 @@ class MCTS:
         """
         # save the game state
         checkpoint = self.transition_model.backup()
+
+        self.t = 0
 
         # 1. SELECT
         selected_node = self._select()
