@@ -16,7 +16,7 @@ def main():
     # env.reset()
     env.reset(human_first=player)
 
-    agent = MCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1)
+    agent = MCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1, max_depth=20)
 
     env.render()
 
