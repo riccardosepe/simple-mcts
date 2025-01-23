@@ -15,14 +15,18 @@ class ChanceNode(Node):
         del self._visits
         del self._score
         del self._game_data
-        del self.visit
-        del self.update_score
-        del self.set_root
 
+    def __repr__(self):
+        return f"Chance(action={self._action})"
 
+    def visit(self):
+        raise RuntimeError
 
+    def update_score(self, score):
+        raise RuntimeError
 
-
+    def set_root(self):
+        raise RuntimeError
 
 class ChoiceNode(Node):
     """
@@ -46,7 +50,7 @@ class ChanceTree(Tree):
 
     @staticmethod
     def create_root(root_legal_actions, root_data):
-        return ChanceNode(root_legal_actions, root_data)
+        return ChoiceNode(None, 0, root_legal_actions, root_data, None)
 
     def insert_node(self, parent_id, action, legal_actions, node_data, chance=None):
         parent = self._nodes[parent_id]
