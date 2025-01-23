@@ -1,7 +1,7 @@
 from unittest import TestCase
 import unittest
 
-from src.mcts import MCTS
+from src import MCTS
 from envs.tictactoe_env import TicTacToeEnv
 
 

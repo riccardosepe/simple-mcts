@@ -1,6 +1,6 @@
 from envs.frozenlake_env import MyFrozenLakeEnv
 from envs.hanoi_env import TowersOfHanoiEnv
-from src.mcts import MCTS
+from src import MCTS
 from envs.tictactoe_env import TicTacToeEnv
 
 HUMAN = True
