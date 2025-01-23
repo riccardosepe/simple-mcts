@@ -13,9 +13,9 @@ class MCTS:
                  keep_subtree=True,
                  max_depth=1000,
                  seed=None):
-        legal_actions = transition_model.legal_actions
-        self.tree = Tree(legal_actions, transition_model.backup())
+
         self.transition_model = transition_model
+        self.tree = self._build_tree()
         self.adversarial = adversarial
         self.gamma = gamma
         self._keep_subtree = keep_subtree
@@ -25,6 +25,9 @@ class MCTS:
 
         random.seed(seed)
         np.random.seed(seed)
+
+    def _build_tree(self):
+        return Tree(self.transition_model.legal_actions, self.transition_model.backup())
 
     def _select(self):
         node = self.tree.root
