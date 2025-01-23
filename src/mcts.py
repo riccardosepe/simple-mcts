@@ -60,7 +60,7 @@ class MCTS:
                 break
         return ret
 
-    def _backpropagate2(self, node, score):
+    def _backpropagate_iter(self, node, score):
         while node is not None:
             node.visit()
             node.update_score(score)
@@ -102,7 +102,7 @@ class MCTS:
 
             if not expanded_node.is_terminal:
                 # 3. SIMULATE
-                score = self._simulate(expanded_node)
+                score = self._evaluate()
 
             else:
                 score = expanded_node.game_reward
