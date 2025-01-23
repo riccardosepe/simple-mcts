@@ -1,5 +1,5 @@
 from src import MCTS
-from src.tree.chance_tree import ChanceTree
+from src.tree.chance_tree import ChanceTree, ChoiceNode
 
 
 class ChanceMCTS(MCTS):
@@ -27,4 +27,39 @@ class ChanceMCTS(MCTS):
                 node = chance_node.children[s]
             else:
                 node = self.tree.insert_node(chance_node.id,
+                                             action=s,  # TODO: "action" is actually a state -> HASH
+                                             legal_actions=self.transition_model.legal_actions,
+                                             node_data=self.transition_model.backup()
                                              )
+            self.t += 1
+        return node
+
+    def _expand(self, node):
+        random_action = node.random_action()
+        s, _, _, _, _ = self.transition_model.step(random_action)
+
+        new_chance_node = self.tree.insert_node(node.id,
+                                                action=random_action,
+                                                legal_actions=None,  # TODO: is this ok?
+                                                node_data=None)  # TODO: is this ok?
+
+        new_choice_node = self.tree.insert_node(new_chance_node.id,
+                                                action=s,
+                                                legal_actions=self.transition_model.legal_actions,
+                                                node_data=self.transition_model.backup()
+                                                )
+        self.t += 1
+
+        return new_choice_node
+
+    def _backpropagate(self, node, score):
+        if node is None:
+            return
+
+        sign = 1
+        coeff = sign * self.gamma
+
+        if isinstance(node, ChoiceNode):
+            node.update_score(score)
+            node.visit()
+        self._backpropagate(node.parent, score * coeff)
