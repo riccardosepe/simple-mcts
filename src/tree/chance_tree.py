@@ -48,3 +48,18 @@ class ChanceTree(Tree):
     def create_root(root_legal_actions, root_data):
         return ChanceNode(root_legal_actions, root_data)
 
+    def insert_node(self, parent_id, action, legal_actions, node_data, chance=None):
+        parent = self._nodes[parent_id]
+        new_id = self._last_id + 1
+        self._last_id = new_id
+
+        assert chance is not None
+        if chance:
+            node_cls = ChanceNode
+        else:
+            node_cls = ChoiceNode
+
+        new_node = node_cls(parent, new_id, legal_actions, node_data, action)
+        parent.add_child(new_node)
+        self._nodes[new_id] = new_node
+        return new_node
