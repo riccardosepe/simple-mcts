@@ -37,6 +37,8 @@ class ChoiceNode(Node):
         - has multiple parents (not for now, need to implement state hashing)
 
     """
+    def __repr__(self):
+        return f"{self.player}(id={self._id}, visits={self._visits}, score={self._score}, state={self._action})"
 
 
 
