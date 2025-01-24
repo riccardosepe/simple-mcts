@@ -1,5 +1,5 @@
 from src import MCTS
-from src.tree.chance_tree import ChanceTree, ChoiceNode
+from src.tree.chance_tree import ChanceTree, ChoiceNode, ChanceNode
 
 
 class ChanceMCTS(MCTS):
@@ -67,3 +67,8 @@ class ChanceMCTS(MCTS):
     def determinize_chance_node(self, state):
         new_root = self.tree.root.children[state]
         self.tree.keep_subtree(new_root)
+
+    def plan(self, *args, **kwargs):
+        if isinstance(self.tree.root, ChanceNode):
+            raise RuntimeError
+        return super().plan(*args, **kwargs)
