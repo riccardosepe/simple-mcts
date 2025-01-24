@@ -39,7 +39,7 @@ class ChoiceNode(Node):
 
     """
     def __repr__(self):
-        return f"{self.player}(id={self._id}, visits={self._visits}, score={self._score}, state={self._action})"
+        return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
 
 
 
