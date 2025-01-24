@@ -60,5 +60,6 @@ class ChanceMCTS(MCTS):
 
         if isinstance(node, ChoiceNode):
             node.update_score(score)
-            node.visit()
+
+        node.visit()  # count the visits also for the chance nodes
         self._backpropagate(node.parent, score * self.gamma)
