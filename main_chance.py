@@ -10,16 +10,14 @@ def main():
     env = MyFrozenLakeEnv(render_mode='human', is_slippery=True, map_name='4x4')
     env.reset(seed=SEED)
 
-    agent = ChanceMCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1, keep_subtree=True)
+    # agent = ChanceMCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1, keep_subtree=False)
 
     env.render()
 
     done = False
     i = 0
     while not done:
-
-        # NB: iterations_budget < b^2 might create problems (b is the branching factor)
-        # TODO: handle cases with iterations_budget < 81?
+        agent = ChanceMCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1, keep_subtree=False, max_depth=50)
         action = agent.plan(iterations_budget=10000)
         obs, _, done, _, _ = env.step(action)
         i += 1
