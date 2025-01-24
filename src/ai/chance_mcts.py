@@ -36,11 +36,12 @@ class ChanceMCTS(MCTS):
 
     def _expand(self, node):
         random_action = node.random_action()
+        support_random_action = self.transition_model.next_states(random_action)
         s, _, _, _, _ = self.transition_model.step(random_action)
 
         new_chance_node = self.tree.insert_node(node.id,
                                                 action=random_action,
-                                                legal_actions=self.transition_model.next_states(random_action),  # TODO: is this ok?
+                                                legal_actions=support_random_action,  # TODO: is this ok?
                                                 node_data=None,
                                                 chance=True)  # TODO: is this ok?
 
