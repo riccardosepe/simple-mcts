@@ -23,7 +23,7 @@ class ChanceMCTS(MCTS):
             chance_node = self.select_ucb(node)
             s, _, _, _, _ = self.transition_model.step(chance_node.action)
             # TODO: HASHING. FOR THE MOMENT (FROZEN LAKE) THE STATE IS JUST AN INTEGER
-            if s in chance_node.children:
+            if chance_node.children[s] is not None:
                 node = chance_node.children[s]
             else:
                 node = self.tree.insert_node(chance_node.id,
