@@ -12,15 +12,12 @@ class ChanceNode(Node):
     """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        del self._visits
         del self._score
         del self._game_data
 
     def __repr__(self):
         return f"Chance(action={self._action})"
 
-    def visit(self):
-        raise RuntimeError
 
     def update_score(self, score):
         raise RuntimeError
