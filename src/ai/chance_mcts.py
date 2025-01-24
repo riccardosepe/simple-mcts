@@ -58,10 +58,7 @@ class ChanceMCTS(MCTS):
         if node is None:
             return
 
-        sign = 1
-        coeff = sign * self.gamma
-
         if isinstance(node, ChoiceNode):
             node.update_score(score)
             node.visit()
-        self._backpropagate(node.parent, score * coeff)
+        self._backpropagate(node.parent, score * self.gamma)
