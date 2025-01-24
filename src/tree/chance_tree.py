@@ -21,9 +21,6 @@ class ChanceNode(Node):
     def update_score(self, score):
         raise RuntimeError
 
-    def set_root(self):
-        raise RuntimeError
-
     @property
     def score(self):
         return sum(map(lambda n: n.score * n.visits, filter(lambda n: n is not None, self.children.values()))) / self.visits
