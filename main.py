@@ -1,5 +1,3 @@
-from envs.frozenlake_env import MyFrozenLakeEnv
-from envs.hanoi_env import TowersOfHanoiEnv
 from src import MCTS
 from envs.tictactoe_env import TicTacToeEnv
 
@@ -10,7 +8,7 @@ SEED = 0
 
 def main():
     env = TicTacToeEnv()
-    env = TowersOfHanoiEnv(num_disks=3)
+    # env = TowersOfHanoiEnv(num_disks=3)
     player = BOT
 
     # env.reset()
