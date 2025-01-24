@@ -16,8 +16,7 @@ class ChanceNode(Node):
         del self._game_data
 
     def __repr__(self):
-        return f"Chance(action={self._action})"
-
+        return f"Chance(visits={self.visits}, score={self.score}, action={self._action})"
 
     def update_score(self, score):
         raise RuntimeError
