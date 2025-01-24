@@ -10,7 +10,7 @@ def main():
     env = MyFrozenLakeEnv(render_mode='human', is_slippery=True, map_name='4x4')
     env.reset(seed=SEED)
 
-    agent = ChanceMCTS(env, seed=SEED, adversarial=env.adversarial, gamma=0.95, keep_subtree=True)
+    agent = ChanceMCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1, keep_subtree=True)
 
     env.render()
 
