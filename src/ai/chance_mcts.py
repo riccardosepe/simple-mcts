@@ -29,8 +29,8 @@ class ChanceMCTS(MCTS):
                 node = self.tree.insert_node(chance_node.id,
                                              action=s,  # TODO: "action" is actually a state -> HASH
                                              legal_actions=self.transition_model.legal_actions,
-                                             node_data=self.transition_model.backup()
-                                             )
+                                             node_data=self.transition_model.backup(),
+                                             chance=False)
             self.t += 1
         return node
 
