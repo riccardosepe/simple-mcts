@@ -1,8 +1,9 @@
 import random
 import time
+from functools import cmp_to_key
 
 import numpy as np
-from src.tree import Tree
+from src.tree.tree import Tree, Node
 
 
 class MCTS:
@@ -13,9 +14,9 @@ class MCTS:
                  keep_subtree=True,
                  max_depth=1000,
                  seed=None):
-        legal_actions = transition_model.legal_actions
-        self.tree = Tree(legal_actions, transition_model.backup())
+
         self.transition_model = transition_model
+        self.tree = self._build_tree()
         self.adversarial = adversarial
         self.gamma = gamma
         self._keep_subtree = keep_subtree
@@ -25,6 +26,9 @@ class MCTS:
 
         random.seed(seed)
         np.random.seed(seed)
+
+    def _build_tree(self):
+        return Tree(self.transition_model.legal_actions, self.transition_model.backup())
 
     def _select(self):
         node = self.tree.root
@@ -67,15 +71,16 @@ class MCTS:
             node = node.parent
 
     def _backpropagate(self, node, score):
-        node: Tree.Node
+        if node is None:
+            return
+        node: Node
         if self.adversarial:
             sign = -1
             coeff = sign
         else:
             sign = 1
             coeff = sign * self.gamma
-        if node is None:
-            return
+
         node.update_score(score)
         node.visit()
         self._backpropagate(node.parent, score * coeff)
@@ -145,8 +150,7 @@ class MCTS:
             elapsed_time = time.time() - start_time
             iteration += 1
 
-        # TODO: NB: this best_child property should belong to MCTS rather than tree
-        best_child = self.tree.root.best_child
+        best_child = self.root_best_child()
         if self._keep_subtree:
             self.tree.keep_subtree(best_child)
             return best_child.action
@@ -187,3 +191,7 @@ class MCTS:
         scores = [(idx, MCTS._ucb(node, parent)) for idx, node in parent.children.items()]
         best_action = max(scores, key=lambda x: x[1])[0]
         return parent.children[best_action]
+
+    def root_best_child(self):
+        children_list = list(self.tree.root.children.values())
+        return sorted(children_list, key=cmp_to_key(Node.node_cmp))[0]

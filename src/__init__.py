@@ -1,6 +1,3 @@
-def main():
-    pass
+from .ai.mcts import MCTS
 
-
-if __name__ == '__main__':
-    main()
+from .tree.tree import Tree, Node

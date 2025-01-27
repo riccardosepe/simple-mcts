@@ -1,6 +1,4 @@
-from envs.frozenlake_env import MyFrozenLakeEnv
-from envs.hanoi_env import TowersOfHanoiEnv
-from src.mcts import MCTS
+from src import MCTS
 from envs.tictactoe_env import TicTacToeEnv
 
 HUMAN = True
@@ -10,7 +8,7 @@ SEED = 0
 
 def main():
     env = TicTacToeEnv()
-    env = TowersOfHanoiEnv(num_disks=3)
+    # env = TowersOfHanoiEnv(num_disks=3)
     player = BOT
 
     # env.reset()
@@ -30,8 +28,6 @@ def main():
             obs, _, done, _, _ = env.step(action)
             agent.opponent_action(action)
         elif player is BOT:
-            # NB: iterations_budget < b^2 might create problems (b is the branching factor)
-            # TODO: handle cases with iterations_budget < 81?
             action = agent.plan(iterations_budget=100)
             obs, _, done, _, _ = env.step(action)
 

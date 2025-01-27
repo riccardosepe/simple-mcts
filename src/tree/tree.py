@@ -44,7 +44,7 @@ class Node:
         del self._children[action]
 
     @property
-    def best_child(self):
+    def _best_child(self):
         children_list = list(self._children.values())
         return sorted(children_list, key=cmp_to_key(Node.node_cmp))[0]
 
@@ -117,8 +117,12 @@ class Node:
 
 class Tree:
 
+    @staticmethod
+    def create_root(root_legal_actions, root_data):
+        return Node(None, 0, root_legal_actions, root_data, None)
+
     def __init__(self, root_legal_actions, root_data):
-        self._root = Node(None, 0, root_legal_actions, root_data, None)
+        self._root = self.create_root(root_legal_actions, root_data)
         self._nodes = {0: self._root}
         self._last_id = 0
 
@@ -129,7 +133,7 @@ class Tree:
     def __getitem__(self, index):
         return self._nodes[index]
 
-    def insert_node(self, parent_id, action, legal_actions, node_data):
+    def insert_node(self, parent_id, action, legal_actions, node_data, **kwargs):
         parent = self._nodes[parent_id]
         new_id = self._last_id + 1
         self._last_id = new_id

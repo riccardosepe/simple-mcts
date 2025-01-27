@@ -11,6 +11,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self._last_reward = None
         self.done = False
         self.lastaction = None
+        self.is_slippery = kwargs.get('is_slippery', False)
 
     def reset(self, *args, **kwargs):
         self._last_reward = None
@@ -18,7 +19,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         return super().reset(*args, **kwargs)
 
     @property
-    def legal_actions(self):
+    def legal_actions_old(self):
         # NB:
         # - 0: Move left
         # - 1: Move down
@@ -35,6 +36,10 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         if j < self.ncol - 1:
             actions.append(2)
         return actions
+
+    @property
+    def legal_actions(self):
+        return list(range(4))
 
     @property
     def _last_action(self):
@@ -79,3 +84,24 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
 
     def reward(self):
         return self._last_reward
+
+    def next_states(self, action):
+        # TODO: is this logic ok here?
+        i, j = self.s // self.ncol, self.s % self.ncol
+
+        def to_s(ii, jj):
+            return ii*self.ncol + jj
+
+        states = {
+            1: to_s(max(i - 1, 0), j),
+            3: to_s(min(i + 1, self.nrow - 1), j),
+            2: to_s(i, max(j - 1, 0)),
+            0: to_s(i, min(j + 1, self.ncol - 1)),
+        }
+        if self.is_slippery:
+            del states[action]
+            return list(states.values())
+
+        else:
+            return [states[(action+2)%4]]
+
