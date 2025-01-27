@@ -44,7 +44,7 @@ class Node:
         del self._children[action]
 
     @property
-    def best_child(self):
+    def _best_child(self):
         children_list = list(self._children.values())
         return sorted(children_list, key=cmp_to_key(Node.node_cmp))[0]
 

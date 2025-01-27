@@ -76,11 +76,11 @@ class TestNode(TestCase):
         child2._score = 4
         child3._score = 3
 
-        assert root.best_child is child1
+        assert root._best_child is child1
 
         child1._visits = 4
 
-        assert root.best_child is child2
+        assert root._best_child is child2
 
 
     def test_is_leaf(self):

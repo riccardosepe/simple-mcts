@@ -1,5 +1,6 @@
 import random
 import time
+from functools import cmp_to_key
 
 import numpy as np
 from src.tree.tree import Tree, Node
@@ -149,8 +150,7 @@ class MCTS:
             elapsed_time = time.time() - start_time
             iteration += 1
 
-        # TODO: NB: this best_child property should belong to MCTS rather than tree
-        best_child = self.tree.root.best_child
+        best_child = self.root_best_child()
         if self._keep_subtree:
             self.tree.keep_subtree(best_child)
             return best_child.action
@@ -191,3 +191,7 @@ class MCTS:
         scores = [(idx, MCTS._ucb(node, parent)) for idx, node in parent.children.items()]
         best_action = max(scores, key=lambda x: x[1])[0]
         return parent.children[best_action]
+
+    def root_best_child(self):
+        children_list = list(self.tree.root.children.values())
+        return sorted(children_list, key=cmp_to_key(Node.node_cmp))[0]
