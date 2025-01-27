@@ -66,7 +66,7 @@ class ChanceMCTS(MCTS):
         if isinstance(node, ChanceNode):
             self._backpropagate(node.parent, score * self.gamma)
         else:
-            for parent in node.parents:
+            for parent in node.parents.values():
                 self._backpropagate(parent, score * self.gamma)
 
     def determinize_chance_node(self, state):
