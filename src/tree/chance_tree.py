@@ -1,3 +1,5 @@
+from absl.app import UsageError
+
 from src.tree.tree import Tree, Node
 
 
@@ -36,8 +38,31 @@ class ChoiceNode(Node):
         - has multiple parents (not for now, need to implement state hashing)
 
     """
+    def __init__(self, parent_node, *args, **kwargs):
+        super().__init__(parent_node, *args, **kwargs)
+        del self._parent_node
+        self._parent_nodes = {parent_node.id: parent_node}
+
     def __repr__(self):
         return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
+
+    def set_root(self):
+        assert self._parent_nodes is not None
+        assert not all(map(lambda n: n is None, self._parent_nodes.values()))
+        self._parent_node = None
+
+    @property
+    def parent(self):
+        raise UsageError
+
+    @property
+    def parents(self):
+        return self._parent_nodes
+
+    @property
+    def is_root(self):
+        return self._parent_nodes is None or all(map(lambda n: n is None, self._parent_nodes.values()))
+
 
 
 
