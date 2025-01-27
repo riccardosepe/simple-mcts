@@ -121,10 +121,15 @@ class Tree:
     def create_root(root_legal_actions, root_data):
         return Node(None, 0, root_legal_actions, root_data, None)
 
+    def generate_node_id(self, **kwargs):
+        self._last_id += 1
+        return self._last_id - 1
+
     def __init__(self, root_legal_actions, root_data):
         self._root = self.create_root(root_legal_actions, root_data)
-        self._nodes = {0: self._root}
         self._last_id = 0
+        root_id = self.generate_node_id()
+        self._nodes = {root_id: self._root}
 
     def __repr__(self):
         s = ', '.join(map(str, self._nodes))
@@ -135,8 +140,7 @@ class Tree:
 
     def insert_node(self, parent_id, action, legal_actions, node_data, **kwargs):
         parent = self._nodes[parent_id]
-        new_id = self._last_id + 1
-        self._last_id = new_id
+        new_id = self.generate_node_id()
         new_node = Node(parent, new_id, legal_actions, node_data, action)
         parent.add_child(new_node)
         self._nodes[new_id] = new_node
