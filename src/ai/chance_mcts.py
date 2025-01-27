@@ -41,9 +41,9 @@ class ChanceMCTS(MCTS):
 
         new_chance_node = self.tree.insert_node(node.id,
                                                 action=random_action,
-                                                legal_actions=support_random_action,  # TODO: is this ok?
+                                                legal_actions=support_random_action,
                                                 node_data=None,
-                                                chance=True)  # TODO: is this ok?
+                                                chance=True)
 
         new_choice_node = self.tree.insert_node(new_chance_node.id,
                                                 action=s,
