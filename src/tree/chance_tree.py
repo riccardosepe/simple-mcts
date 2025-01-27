@@ -53,7 +53,7 @@ class ChoiceNode(Node):
 
     @property
     def parent(self):
-        raise UsageError
+        raise RuntimeError
 
     @property
     def parents(self):
