@@ -142,12 +142,20 @@ class Tree:
         self._nodes[new_id] = new_node
         return new_node
 
-    def delete_subtree(self, node):
+    def delete_subtree(self, node, parent):
+        """
+        This method deletes a subtree that starts from `node` (included). It is only used within the method
+        `keep_subtree`.
+        """
         self._delete_subtree(node)
-        del node.parent.children[node.action]
+        assert node in parent.children.values()
+        del parent.children[node.action]
         del self._nodes[node.id]
 
     def _delete_subtree(self, node):
+        """
+        This method recursively delete a subtree that starts from `node` (excluded)
+        """
         if node.is_leaf:
             return
         for child_id in list(node.children):
@@ -167,7 +175,7 @@ class Tree:
             if n is node:
                 continue
 
-            self.delete_subtree(n)
+            self.delete_subtree(n, self._root)
 
         # At this point, I still have the root with only the selected child (`node`)
         del self._nodes[self._root.id]
