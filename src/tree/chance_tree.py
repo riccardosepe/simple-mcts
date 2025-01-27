@@ -41,7 +41,7 @@ class ChoiceNode(Node):
     def __init__(self, parent_node, *args, **kwargs):
         super().__init__(parent_node, *args, **kwargs)
         del self._parent_node
-        self._parent_nodes = {parent_node.id: parent_node}
+        self._parent_nodes = {parent_node.id: parent_node} if parent_node is not None else {}
 
     def __repr__(self):
         return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
