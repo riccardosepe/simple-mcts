@@ -23,6 +23,7 @@ class ChanceNode(Node):
 
     @property
     def score(self):
+        assert sum(map(lambda n: n.visits, filter(lambda n: n is not None, self.children.values()))) == self.visits
         return sum(map(lambda n: n.score * n.visits, filter(lambda n: n is not None, self.children.values()))) / self.visits
 
 
