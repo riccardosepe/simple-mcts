@@ -74,9 +74,19 @@ class ChanceTree(Tree):
         - an episode must necessarily start with a Choice node and end with a Chance node
     """
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._choice_nodes = dict()
+
     @staticmethod
     def create_root(root_legal_actions, root_data):
         return ChoiceNode(None, 0, root_legal_actions, root_data, None)
+
+    @staticmethod
+    def generate_node_hash(node_data):
+        state = node_data['state']
+        t = node_data['t']
+        return state, t
 
     def insert_node(self, parent_id, action, legal_actions, node_data, chance=None):
         parent = self._nodes[parent_id]
@@ -85,11 +95,14 @@ class ChanceTree(Tree):
 
         assert chance is not None
         if chance:
-            node_cls = ChanceNode
+            new_node = ChanceNode(parent, new_id, legal_actions, node_data, action)
+            parent.add_child(new_node)
+            self._nodes[new_id] = new_node
         else:
-            node_cls = ChoiceNode
+            new_node = ChoiceNode(parent, new_id, legal_actions, node_data, action)
+            parent.add_child(new_node)
+            self._nodes[new_id] = new_node
+            node_hash = self.generate_node_hash(node_data)
+            self._choice_nodes[node_hash] = new_node
 
-        new_node = node_cls(parent, new_id, legal_actions, node_data, action)
-        parent.add_child(new_node)
-        self._nodes[new_id] = new_node
         return new_node
