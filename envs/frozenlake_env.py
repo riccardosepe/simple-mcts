@@ -12,10 +12,12 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self.done = False
         self.lastaction = None
         self.is_slippery = kwargs.get('is_slippery', False)
+        self.t = 0
 
     def reset(self, *args, **kwargs):
         self._last_reward = None
         self.done = False
+        self.t = 0
         return super().reset(*args, **kwargs)
 
     @property
@@ -51,6 +53,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self.render_mode = 'human'
         self._last_reward = r
         self.done = d
+        self.t += 1
         return s, r, d, t, i
 
     @property
@@ -63,7 +66,8 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
             'last_action': self._last_action,
             'done': self.done,
             'reward': self.reward(),
-            'player': 'Agent'
+            'player': 'Agent',
+            't': self.t
         }
         return checkpoint
 
@@ -72,15 +76,16 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self.lastaction = checkpoint['last_action']
         self._last_reward = checkpoint['reward']
         self.done = checkpoint['done']
+        self.t = checkpoint['t']
 
     def game_result(self):
         if not self.done:
             return "Game still running"
         else:
             if self.desc.flatten()[self.s] == b'G':
-                return "You made it!"
+                return f"You made it after {self.t} steps!"
             else:
-                return "You fell into an ice pit :("
+                return f"You fell into an ice pit after {self.t} steps :("
 
     def reward(self):
         return self._last_reward
