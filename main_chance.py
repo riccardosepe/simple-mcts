@@ -21,7 +21,7 @@ def main():
     done = False
     i = 0
     while not done:
-        action = agent.plan(iterations_budget=10000)
+        action = agent.plan(iterations_budget=10000, time_budget=1)
         obs, _, done, _, _ = env.step(action)
         i += 1
         env.render()
