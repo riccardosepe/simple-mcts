@@ -61,7 +61,7 @@ class MCTS:
             # sparse / non-sparse setting
             ret += r
             self.t += 1
-            if self.t >= self._max_depth:
+            if self.transition_model.t >= self._max_depth:
                 ret = 0
                 break
             if d:
