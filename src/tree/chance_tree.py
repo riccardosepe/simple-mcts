@@ -112,3 +112,6 @@ class ChanceTree(Tree):
             self._choice_nodes[node_hash] = new_node
 
         return new_node
+
+    def get_choice_node_if_existing(self, node_hash):
+        return self._choice_nodes.get(node_hash)
