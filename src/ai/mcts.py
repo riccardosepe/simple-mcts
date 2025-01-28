@@ -133,7 +133,7 @@ class MCTS:
         Run a bunch of `_plan_iteration`s until either the iterations budget or the time budget is reached.
 
         :param iterations_budget: the maximum number of iterations to run
-        :param time_budget: the maximum available time for a single action
+        :param time_budget: the maximum available time for a single action (in seconds)
         :return: the chosen action
         """
 
