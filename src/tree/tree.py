@@ -24,8 +24,8 @@ class Node:
         self._children[child.action] = child
         self._available_actions.remove(child.action)
 
-    def visit(self):
-        self._visits += 1
+    def visit(self, n=1):
+        self._visits += n
 
     def update_score(self, score):
         self._score += score
