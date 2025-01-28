@@ -160,6 +160,7 @@ class MCTS:
             return best_child.action
         else:
             del self.tree
+            self._reset()
             return best_child.action
 
     def init_tree(self, legal_actions, root_data):
