@@ -164,7 +164,11 @@ class Tree:
                 continue
             self._delete_subtree(n)
             del node.children[child_id]
-            del self._nodes[n.id]
+            try:
+                del self._nodes[n.id]
+            except KeyError:
+                # TODO: this node was deleted following a different subtree
+                pass
 
     def keep_subtree(self, node):
         assert node in self._root.children.values()
