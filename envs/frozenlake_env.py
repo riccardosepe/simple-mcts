@@ -3,16 +3,66 @@ from copy import deepcopy
 from gymnasium.envs.toy_text import FrozenLakeEnv
 
 from envs.base_env import BaseEnv
+LEFT = 0
+DOWN = 1
+RIGHT = 2
+UP = 3
 
 
 class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, p=1/3, **kwargs):
         super().__init__(*args, **kwargs)
         self._last_reward = None
         self.done = False
         self.lastaction = None
         self.is_slippery = kwargs.get('is_slippery', False)
         self.t = 0
+        ps = [(1-p)/2, p, (1-p)/2]
+
+        nA = 4
+        nS = self.nrow * self.ncol
+
+        self.P = {s: {a: [] for a in range(nA)} for s in range(nS)}
+
+        def to_s(row, col):
+            return row * self.ncol + col
+
+        def inc(row, col, a):
+            if a == LEFT:
+                col = max(col - 1, 0)
+            elif a == DOWN:
+                row = min(row + 1, self.nrow - 1)
+            elif a == RIGHT:
+                col = min(col + 1, self.ncol - 1)
+            elif a == UP:
+                row = max(row - 1, 0)
+            return (row, col)
+
+        def update_probability_matrix(row, col, action):
+            new_row, new_col = inc(row, col, action)
+            new_state = to_s(new_row, new_col)
+            new_letter = self.desc[new_row, new_col]
+            terminated = bytes(new_letter) in b"GH"
+            reward = float(new_letter == b"G")
+            return new_state, reward, terminated
+
+        for row in range(self.nrow):
+            for col in range(self.ncol):
+                s = to_s(row, col)
+                for a in range(4):
+                    li = self.P[s][a]
+                    letter = self.desc[row, col]
+                    if letter in b"GH":
+                        li.append((1.0, s, 0, True))
+                    else:
+                        if self.is_slippery:
+                            for k, b in enumerate([(a - 1) % 4, a, (a + 1) % 4]):
+                                li.append(
+                                    (ps[k], *update_probability_matrix(row, col, b))
+                                )
+                        else:
+                            li.append((1.0, *update_probability_matrix(row, col, a)))
+
 
     def reset(self, *args, **kwargs):
         self._last_reward = None
