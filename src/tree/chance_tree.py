@@ -72,8 +72,11 @@ class ChoiceNode(Node):
     def is_root(self):
         return self._parent_nodes is None or all(map(lambda n: n is None, self._parent_nodes.values()))
 
-
-
+    @staticmethod
+    def generate_node_hash(node_data):
+        state = node_data['state']
+        t = node_data['t']
+        return state, t
 
 class ChanceTree(Tree):
     """
@@ -91,12 +94,6 @@ class ChanceTree(Tree):
     def create_root(root_legal_actions, root_data):
         return ChoiceNode(None, 0, root_legal_actions, root_data, None)
 
-    @staticmethod
-    def generate_node_hash(node_data):
-        state = node_data['state']
-        t = node_data['t']
-        return state, t
-
     def insert_node(self, parent_id, action, legal_actions, node_data, chance=None):
         parent = self._nodes[parent_id]
         new_id = self._last_id + 1
@@ -111,7 +108,7 @@ class ChanceTree(Tree):
             new_node = ChoiceNode(parent, new_id, legal_actions, node_data, action)
             parent.add_child(new_node)
             self._nodes[new_id] = new_node
-            node_hash = self.generate_node_hash(node_data)
+            node_hash = ChoiceNode.generate_node_hash(node_data)
             self._choice_nodes[node_hash] = new_node
 
         return new_node
