@@ -1,20 +1,18 @@
-import random
-
 from envs.frozenlake_env import MyFrozenLakeEnv
 from src.ai.chance_mcts import ChanceMCTS
 
 HUMAN = True
 BOT = False
-SEED = random.randint(0, 1000)
+SEED = 0
 
 
-def main():
-    print("Using seed ", SEED)
+def main(seed):
+    print("Using seed ", seed)
     env = MyFrozenLakeEnv(render_mode='human', is_slippery=True, map_name='4x4')
-    env.reset(seed=SEED)
+    env.reset(seed=seed)
     keep_subtree = False
 
-    agent = ChanceMCTS(env, seed=SEED, adversarial=env.adversarial, gamma=1, keep_subtree=keep_subtree, max_depth=50)
+    agent = ChanceMCTS(env, seed=seed, adversarial=env.adversarial, gamma=1, keep_subtree=keep_subtree, max_depth=100)
 
     env.render()
 
@@ -33,5 +31,6 @@ def main():
     env.close()
     
 if __name__ == '__main__':
-    main()
+    for s in range(10):
+        main(s)
    
