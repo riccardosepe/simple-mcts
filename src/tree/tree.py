@@ -186,16 +186,16 @@ class Tree:
         assert self._root is self._nodes[self._root.id]
 
 
-    def visualize(self, node_id=None, level=None):
+    def visualize(self, node_id=None, level=None, mode='repr'):
         if level is None:
             level = self._last_id
         if node_id is None:
             node = self._root
         else:
             node = self._nodes[node_id]
-        self._visualize(node, 0, level)
+        self._visualize(node, 0, level, mode)
 
-    def _visualize(self, node, depth, level):
+    def _visualize(self, node, depth, level, mode):
         """
         Recursively prints the structure of the tree starting from the given node.
 
@@ -203,11 +203,17 @@ class Tree:
         :param depth: The current depth of the node, used for indentation.
         """
         indent = "  " * depth
-        print(f"{indent}{node}")
+
+        if mode == 'repr':
+            s = node.__repr__()
+        else:
+            s = node.__str__()
+
+        print(f"{indent}{s}")
 
         for action, child in node.children.items():
             if child is not None and level > 0:
-                self._visualize(child, depth + 1, level-1)
+                self._visualize(child, depth + 1, level-1, mode)
 
     @property
     def root(self):

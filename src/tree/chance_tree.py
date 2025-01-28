@@ -20,6 +20,9 @@ class ChanceNode(Node):
     def __repr__(self):
         return f"Chance(visits={self.visits}, score={self.score}, action={self._action})"
 
+    def __str__(self):
+        return f"Chance(visits={self.visits}, score=n.a., action={self._action})"
+
     def update_score(self, score):
         raise RuntimeError
 
@@ -45,6 +48,9 @@ class ChoiceNode(Node):
 
     def __repr__(self):
         return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
+
+    def __str__(self):
+        return f"Choice(visits={self.visits}, score=n.a., state={self._action})"
 
     def set_root(self):
         assert self._parent_nodes is not None
