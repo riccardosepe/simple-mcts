@@ -27,6 +27,10 @@ class MCTS:
         random.seed(seed)
         np.random.seed(seed)
 
+    def _reset(self):
+        self.t = None
+        self.tree = self._build_tree()
+
     def _build_tree(self):
         return Tree(self.transition_model.legal_actions, self.transition_model.backup())
 
