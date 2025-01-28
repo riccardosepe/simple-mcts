@@ -1,12 +1,15 @@
+import random
+
 from envs.frozenlake_env import MyFrozenLakeEnv
 from src.ai.chance_mcts import ChanceMCTS
 
 HUMAN = True
 BOT = False
-SEED = 0
+SEED = random.randint(0, 1000)
 
 
 def main():
+    print("Using seed ", SEED)
     env = MyFrozenLakeEnv(render_mode='human', is_slippery=True, map_name='4x4')
     env.reset(seed=SEED)
 
