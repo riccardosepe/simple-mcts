@@ -68,20 +68,20 @@ class ChanceMCTS(MCTS):
 
         return new_choice_node
 
-    def _backpropagate(self, node, score):
+    def _backpropagate(self, node, score, visits=1):
         if node is None:
             return
 
         if isinstance(node, ChoiceNode):
             node.update_score(score)
 
-        node.visit()  # count the visits also for the chance nodes
+        node.visit(visits)  # count the visits also for the chance nodes
 
         if isinstance(node, ChanceNode):
-            self._backpropagate(node.parent, score * self.gamma)
+            self._backpropagate(node.parent, score * self.gamma, visits)
         else:
             for parent in node.parents.values():
-                self._backpropagate(parent, score * self.gamma)
+                self._backpropagate(parent, score * self.gamma, visits)
 
     def determinize_chance_node(self, state):
         new_root = self.tree.root.children[state]
