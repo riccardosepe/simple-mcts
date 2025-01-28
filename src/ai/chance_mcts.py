@@ -26,6 +26,7 @@ class ChanceMCTS(MCTS):
             if chance_node.children[s] is not None:
                 node = chance_node.children[s]
             else:
+                # insert a chance node
                 node = self.tree.insert_node(chance_node.id,
                                              action=s,  # TODO: "action" is actually a state -> HASH
                                              legal_actions=self.transition_model.legal_actions,
@@ -39,17 +40,30 @@ class ChanceMCTS(MCTS):
         support_random_action = self.transition_model.next_states(random_action)
         s, _, _, _, _ = self.transition_model.step(random_action)
 
+        # insert first a chance node
         new_chance_node = self.tree.insert_node(node.id,
                                                 action=random_action,
                                                 legal_actions=support_random_action,
                                                 node_data=None,
                                                 chance=True)
 
-        new_choice_node = self.tree.insert_node(new_chance_node.id,
-                                                action=s,
-                                                legal_actions=self.transition_model.legal_actions,
-                                                node_data=self.transition_model.backup(),
-                                                chance=False)
+        # then insert a choice node
+        # if there is already a hashed choice node, use that one instead
+        node_data = self.transition_model.backup()
+        node_hash = ChoiceNode.generate_node_hash(node_data)
+        hashed_node = self.tree.get_choice_node_if_existing(node_hash)
+        if hashed_node is None:
+            new_choice_node = self.tree.insert_node(new_chance_node.id,
+                                                    action=s,
+                                                    legal_actions=self.transition_model.legal_actions,
+                                                    node_data=self.transition_model.backup(),
+                                                    chance=False)
+        else:
+            new_choice_node = hashed_node
+            new_chance_node.add_child(hashed_node)
+            # UPDATE STATISTICS
+            # this part is fundamental for consistency: update the statistics of all the alternative
+            hashed_node.add_parent(new_chance_node)
         self.t += 1
 
         return new_choice_node
