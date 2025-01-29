@@ -1,4 +1,5 @@
 from envs.frozenlake_env import MyFrozenLakeEnv
+from src.evaluators.frozen_lake_evaluator import FrozenLakeEvaluator
 
 SEED = 0
 
@@ -6,7 +7,10 @@ SEED = 0
 def main():
     env = MyFrozenLakeEnv(render_mode='human', is_slippery=False)
 
-    env.reset()
+    evaluator = FrozenLakeEvaluator(env.desc, alpha = 0.3)
+
+    obs, _ = env.reset()
+    print("Score: ", evaluator.evaluate(obs))
     env.render()
 
     done = False
@@ -16,6 +20,7 @@ def main():
         obs, r, done, _, _ = env.step(action)
 
         print("Got reward ", r)
+        print("Score: ", evaluator.evaluate(obs))
 
         env.render()
 
