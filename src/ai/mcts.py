@@ -53,7 +53,7 @@ class MCTS:
 
         return new_node
 
-    def _evaluate(self):
+    def _evaluate(self, leaf_node):
         ret = 0
         while True:
             action = random.choice(self.transition_model.legal_actions)
@@ -111,7 +111,7 @@ class MCTS:
 
             if not expanded_node.is_terminal:
                 # 3. SIMULATE
-                score = self._evaluate()
+                score = self._evaluate(expanded_node)
 
             else:
                 score = expanded_node.game_reward
