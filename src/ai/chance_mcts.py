@@ -79,7 +79,7 @@ class ChanceMCTS(MCTS):
         if self._evaluator is None:
             return super()._evaluate(leaf_node)
         else:
-            node_state = leaf_node._game_data['state']
+            node_state = leaf_node.game_state
             return self._evaluator.evaluate(node_state)
 
     def _backpropagate(self, node, score, visits=1):

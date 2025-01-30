@@ -108,6 +108,10 @@ class Node:
         return self._game_data['reward']
 
     @property
+    def game_state(self):
+        return self._game_data['state']
+
+    @property
     def action(self):
         return self._action
 
