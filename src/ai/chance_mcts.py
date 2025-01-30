@@ -1,4 +1,5 @@
 from src import MCTS
+from src.evaluators.frozen_lake_evaluator import FrozenLakeEvaluator
 from src.tree.chance_tree import ChanceTree, ChoiceNode, ChanceNode
 
 
@@ -10,9 +11,13 @@ class ChanceMCTS(MCTS):
     - the backpropagation skips the chance nodes
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, alpha=None, **kwargs):
         kwargs['adversarial'] = False
         super().__init__(*args, **kwargs)
+        if alpha is None:
+            self._evaluator = None
+        else:
+            self._evaluator = FrozenLakeEvaluator(self.transition_model.desc, alpha)
 
     def _build_tree(self):
         return ChanceTree(self.transition_model.legal_actions, self.transition_model.backup())
@@ -69,6 +74,13 @@ class ChanceMCTS(MCTS):
         self.t += 1
 
         return new_choice_node
+
+    def _evaluate(self, leaf_node):
+        if self._evaluator is None:
+            return super()._evaluate(leaf_node)
+        else:
+            node_state = leaf_node._game_data['state']
+            return self._evaluator.evaluate(node_state)
 
     def _backpropagate(self, node, score, visits=1):
         if node is None:
