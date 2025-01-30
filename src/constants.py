@@ -1,5 +1,11 @@
-# Program constants / server constants
-HOST = "127.0.0.1"
-PORT = 1024  # 0x4A7AB1 could have been a better port, but networkers did not allow us to have it
-DATASIZE = int(10240 / 4)
-SEED = None
+import os
+
+PROJECT_NAME = "simple-mcts"
+ENTITY_NAME = "riccardos"
+PROJECT_PATH = os.getcwd()
+
+while os.path.basename(PROJECT_PATH) != PROJECT_NAME:
+    PROJECT_PATH = os.path.dirname(PROJECT_PATH)
+    if PROJECT_PATH == '/':
+        raise RuntimeError("Project folder not found")
+
