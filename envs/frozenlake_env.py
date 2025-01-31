@@ -3,19 +3,71 @@ from copy import deepcopy
 from gymnasium.envs.toy_text import FrozenLakeEnv
 
 from envs.base_env import BaseEnv
+LEFT = 0
+DOWN = 1
+RIGHT = 2
+UP = 3
 
 
 class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, p=1/3, **kwargs):
         super().__init__(*args, **kwargs)
         self._last_reward = None
         self.done = False
         self.lastaction = None
         self.is_slippery = kwargs.get('is_slippery', False)
+        self.t = 0
+        ps = [(1-p)/2, p, (1-p)/2]
+
+        nA = 4
+        nS = self.nrow * self.ncol
+
+        self.P = {s: {a: [] for a in range(nA)} for s in range(nS)}
+
+        def to_s(row, col):
+            return row * self.ncol + col
+
+        def inc(row, col, a):
+            if a == LEFT:
+                col = max(col - 1, 0)
+            elif a == DOWN:
+                row = min(row + 1, self.nrow - 1)
+            elif a == RIGHT:
+                col = min(col + 1, self.ncol - 1)
+            elif a == UP:
+                row = max(row - 1, 0)
+            return (row, col)
+
+        def update_probability_matrix(row, col, action):
+            new_row, new_col = inc(row, col, action)
+            new_state = to_s(new_row, new_col)
+            new_letter = self.desc[new_row, new_col]
+            terminated = bytes(new_letter) in b"GH"
+            reward = float(new_letter == b"G")
+            return new_state, reward, terminated
+
+        for row in range(self.nrow):
+            for col in range(self.ncol):
+                s = to_s(row, col)
+                for a in range(4):
+                    li = self.P[s][a]
+                    letter = self.desc[row, col]
+                    if letter in b"GH":
+                        li.append((1.0, s, 0, True))
+                    else:
+                        if self.is_slippery:
+                            for k, b in enumerate([(a - 1) % 4, a, (a + 1) % 4]):
+                                li.append(
+                                    (ps[k], *update_probability_matrix(row, col, b))
+                                )
+                        else:
+                            li.append((1.0, *update_probability_matrix(row, col, a)))
+
 
     def reset(self, *args, **kwargs):
         self._last_reward = None
         self.done = False
+        self.t = 0
         return super().reset(*args, **kwargs)
 
     @property
@@ -51,6 +103,7 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self.render_mode = 'human'
         self._last_reward = r
         self.done = d
+        self.t += 1
         return s, r, d, t, i
 
     @property
@@ -63,7 +116,8 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
             'last_action': self._last_action,
             'done': self.done,
             'reward': self.reward(),
-            'player': 'Agent'
+            'player': 'Agent',
+            't': self.t
         }
         return checkpoint
 
@@ -72,15 +126,16 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self.lastaction = checkpoint['last_action']
         self._last_reward = checkpoint['reward']
         self.done = checkpoint['done']
+        self.t = checkpoint['t']
 
     def game_result(self):
         if not self.done:
             return "Game still running"
         else:
             if self.desc.flatten()[self.s] == b'G':
-                return "You made it!"
+                return f"You made it after {self.t} steps!"
             else:
-                return "You fell into an ice pit :("
+                return f"You fell into an ice pit after {self.t} steps :("
 
     def reward(self):
         return self._last_reward

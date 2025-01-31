@@ -24,8 +24,8 @@ class Node:
         self._children[child.action] = child
         self._available_actions.remove(child.action)
 
-    def visit(self):
-        self._visits += 1
+    def visit(self, n=1):
+        self._visits += n
 
     def update_score(self, score):
         self._score += score
@@ -142,12 +142,20 @@ class Tree:
         self._nodes[new_id] = new_node
         return new_node
 
-    def delete_subtree(self, node):
+    def delete_subtree(self, node, parent):
+        """
+        This method deletes a subtree that starts from `node` (included). It is only used within the method
+        `keep_subtree`.
+        """
         self._delete_subtree(node)
-        del node.parent.children[node.action]
+        assert node in parent.children.values()
+        del parent.children[node.action]
         del self._nodes[node.id]
 
     def _delete_subtree(self, node):
+        """
+        This method recursively delete a subtree that starts from `node` (excluded)
+        """
         if node.is_leaf:
             return
         for child_id in list(node.children):
@@ -156,7 +164,11 @@ class Tree:
                 continue
             self._delete_subtree(n)
             del node.children[child_id]
-            del self._nodes[n.id]
+            try:
+                del self._nodes[n.id]
+            except KeyError:
+                # TODO: this node was deleted following a different subtree
+                pass
 
     def keep_subtree(self, node):
         assert node in self._root.children.values()
@@ -167,7 +179,7 @@ class Tree:
             if n is node:
                 continue
 
-            self.delete_subtree(n)
+            self.delete_subtree(n, self._root)
 
         # At this point, I still have the root with only the selected child (`node`)
         del self._nodes[self._root.id]
@@ -178,16 +190,16 @@ class Tree:
         assert self._root is self._nodes[self._root.id]
 
 
-    def visualize(self, node_id=None, level=None):
+    def visualize(self, node_id=None, level=None, mode='repr'):
         if level is None:
             level = self._last_id
         if node_id is None:
             node = self._root
         else:
             node = self._nodes[node_id]
-        self._visualize(node, 0, level)
+        self._visualize(node, 0, level, mode)
 
-    def _visualize(self, node, depth, level):
+    def _visualize(self, node, depth, level, mode):
         """
         Recursively prints the structure of the tree starting from the given node.
 
@@ -195,11 +207,17 @@ class Tree:
         :param depth: The current depth of the node, used for indentation.
         """
         indent = "  " * depth
-        print(f"{indent}{node}")
+
+        if mode == 'repr':
+            s = node.__repr__()
+        else:
+            s = node.__str__()
+
+        print(f"{indent}{s}")
 
         for action, child in node.children.items():
             if child is not None and level > 0:
-                self._visualize(child, depth + 1, level-1)
+                self._visualize(child, depth + 1, level-1, mode)
 
     @property
     def root(self):

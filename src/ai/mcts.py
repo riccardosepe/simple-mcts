@@ -27,6 +27,10 @@ class MCTS:
         random.seed(seed)
         np.random.seed(seed)
 
+    def _reset(self):
+        self.t = None
+        self.tree = self._build_tree()
+
     def _build_tree(self):
         return Tree(self.transition_model.legal_actions, self.transition_model.backup())
 
@@ -57,7 +61,7 @@ class MCTS:
             # sparse / non-sparse setting
             ret += r
             self.t += 1
-            if self.t >= self._max_depth:
+            if self.transition_model.t >= self._max_depth:
                 ret = 0
                 break
             if d:
@@ -129,7 +133,7 @@ class MCTS:
         Run a bunch of `_plan_iteration`s until either the iterations budget or the time budget is reached.
 
         :param iterations_budget: the maximum number of iterations to run
-        :param time_budget: the maximum available time for a single action
+        :param time_budget: the maximum available time for a single action (in seconds)
         :return: the chosen action
         """
 
@@ -156,6 +160,7 @@ class MCTS:
             return best_child.action
         else:
             del self.tree
+            self._reset()
             return best_child.action
 
     def init_tree(self, legal_actions, root_data):
