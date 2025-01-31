@@ -1,16 +1,17 @@
-import wandb
+from tqdm import tqdm
 
 from envs.frozenlake_env import MyFrozenLakeEnv
 from src.ai.chance_mcts import ChanceMCTS
-from src.constants import PROJECT_NAME, ENTITY_NAME
 
 
 def run(seed, conf):
-    conf['seed'] = seed
     is_slippery = conf.get('is_slippery')
-    evaluation_method = conf.get('evaluation_method')
     max_depth = conf.get('max_depth')
     iterations_budget = conf.get('iterations_budget')
+    # group = conf.get('group')
+    alpha = conf.get('alpha')
+
+    # group = group + f"_seed-{seed}"
 
     env = MyFrozenLakeEnv(is_slippery=is_slippery)
     env.reset(seed=seed)
@@ -18,35 +19,66 @@ def run(seed, conf):
     agent = ChanceMCTS(env,
                        seed=seed,
                        adversarial=False,
-                       evaluation_method=evaluation_method,
                        keep_subtree=False,
-                       max_depth=max_depth)
+                       max_depth=max_depth,
+                       alpha=alpha,)
 
     done = False
-    while not done:
+    reward = 0
+    trunc = False
+    hole = False
+    while not done and env.t <= max_depth:
         action = agent.plan(iterations_budget=iterations_budget)
-        _, _, done, _, _ = env.step(action)
+        _, reward, done, trunc, _ = env.step(action)
 
+    if not done and env.t >= max_depth and reward == 0:
+        trunc = True
+
+    if done and env.t < max_depth and reward == 0:
+        hole = True
     env.close()
+    # return reward (also success, since it's boolean), episode length, whether the episode was truncated and whether the agent fell in a hole
+    return reward, env.t, trunc, hole
 
 
 def main():
+
+    # wandb.init(
+    #     project=PROJECT_NAME,
+    #     entity=ENTITY_NAME,
+    #     config=conf,
+    #     group=group,
+    #     name='rand' if alpha is None else f'alpha-{alpha}',
+    # )
+    # wandb.finish()
+    #
     conf = {
-        'is_slippery': False,
-        'evaluation_method': 'rand',
+        'is_slippery': True,
         'iterations_budget': 100,
         'max_depth': 100,
-        'num_seeds': 50
+        'num_seeds': 1000,
+        'group': 'rand_vs_function',
+        'alpha': None
     }
-    wandb.init(
-        project=PROJECT_NAME,
-        entity=ENTITY_NAME,
-        config=conf,
-    )
 
     num_seeds = conf['num_seeds']
-    for s in range(num_seeds):
-        run(seed=s, conf=conf)
+    cumulative_return = 0
+    cumulative_episode_length = 0
+    num_truncated = 0
+    num_holes = 0
+    for s in tqdm(range(num_seeds)):
+        ret, ep_length, trunc, hole = run(seed=s, conf=conf)
+        cumulative_return += ret
+        cumulative_episode_length += ep_length
+        num_truncated += trunc
+        num_holes += hole
+
+    print(conf)
+    print("Average episode return: ", cumulative_return/num_seeds)
+    print("Average episode length: ", cumulative_episode_length/num_seeds)
+    print("Truncated episodes ratio: ", num_truncated/num_seeds)
+    print("Fall in hole ratio: ", num_holes/num_seeds)
+
     
 if __name__ == '__main__':
     main()
