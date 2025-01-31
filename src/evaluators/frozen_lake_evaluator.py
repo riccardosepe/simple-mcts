@@ -74,15 +74,12 @@ class FrozenLakeEvaluator:
         if self.board[x, y] == b'H':
             return 0
 
-        for i in [-1, 0, 1]:
-            for j in [-1, 0, 1]:
-                if i == j:
-                    continue
-                if 0 <= x + i < self.nrows and 0 <= y + j < self.ncols:
-                    c = self.board[x + i, y + j]
-                    n += 1
-                    if c == b'H':
-                        h += 1
+        for i, j in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            if 0 <= x + i < self.nrows and 0 <= y + j < self.ncols:
+                c = self.board[x + i, y + j]
+                n += 1
+                if c == b'H':
+                    h += 1
 
         return (n - h) / n
 
