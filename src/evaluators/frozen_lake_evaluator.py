@@ -26,16 +26,6 @@ class FrozenLakeEvaluator:
     def _pos_to_indices(self, pos):
         return pos // self.ncols, pos % self.ncols
 
-    def _distance(self, obs):
-        """
-        This function returns 1-M, where M is the normalized manhattan distance between the agent and the goal positions
-        """
-        agent_pos = np.array([*self._pos_to_indices(obs)])
-
-        agent_goal_distance = self._manhattan(agent_pos, self.goal_pos)
-
-        return (self._max_distance - agent_goal_distance) / self._max_distance
-
     def _build_landscape(self):
         rows, cols = self.board.shape
         queue = deque()
@@ -57,8 +47,18 @@ class FrozenLakeEvaluator:
 
         return (landscape - np.min(landscape)) / -np.min(landscape)
 
+    def _distance_feature(self, obs):
+        """
+        This function returns 1-M, where M is the normalized manhattan distance between the agent and the goal positions
+        """
+        agent_pos = np.array([*self._pos_to_indices(obs)])
 
-    def _safety(self, obs):
+        agent_goal_distance = self._manhattan(agent_pos, self.goal_pos)
+
+        return (self._max_distance - agent_goal_distance) / self._max_distance
+
+
+    def _safety_feature(self, obs):
         """
         This function returns how safe a square is, i.e. how many holes are in the neighborhood of the agent.
         Moreover, if the agent is on the goal, safety = 1, if the agent is in an ice pit, safety = 0.
