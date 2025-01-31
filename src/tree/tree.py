@@ -112,6 +112,10 @@ class Node:
         return self._game_data['state']
 
     @property
+    def time(self):
+        return self._game_data['t']
+
+    @property
     def action(self):
         return self._action
 
