@@ -157,11 +157,11 @@ class MCTS:
         best_child = self.root_best_child()
         if self._keep_subtree:
             self.tree.keep_subtree(best_child)
-            return best_child.action
         else:
             del self.tree
             self._reset()
-            return best_child.action
+
+        return best_child.action
 
     def init_tree(self, legal_actions, root_data):
         self.tree = Tree(root_legal_actions=legal_actions, root_data=root_data)
