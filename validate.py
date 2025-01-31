@@ -52,32 +52,35 @@ def main():
     # )
     # wandb.finish()
     #
-    conf = {
-        'is_slippery': True,
-        'iterations_budget': 100,
-        'max_depth': 100,
-        'num_seeds': 1000,
-        'group': 'rand_vs_function',
-        'alpha': None
-    }
 
-    num_seeds = conf['num_seeds']
-    cumulative_return = 0
-    cumulative_episode_length = 0
-    num_truncated = 0
-    num_holes = 0
-    for s in tqdm(range(num_seeds)):
-        ret, ep_length, trunc, hole = run(seed=s, conf=conf)
-        cumulative_return += ret
-        cumulative_episode_length += ep_length
-        num_truncated += trunc
-        num_holes += hole
+    for alpha in [0.8, 0.85, 0.9, 0.95]:
 
-    print(conf)
-    print("Average episode return: ", cumulative_return/num_seeds)
-    print("Average episode length: ", cumulative_episode_length/num_seeds)
-    print("Truncated episodes ratio: ", num_truncated/num_seeds)
-    print("Fall in hole ratio: ", num_holes/num_seeds)
+        conf = {
+            'is_slippery': True,
+            'iterations_budget': 100,
+            'max_depth': 100,
+            'num_seeds': 1000,
+            'group': 'rand_vs_function',
+            'alpha': alpha
+        }
+
+        num_seeds = conf['num_seeds']
+        cumulative_return = 0
+        cumulative_episode_length = 0
+        num_truncated = 0
+        num_holes = 0
+        for s in tqdm(range(num_seeds)):
+            ret, ep_length, trunc, hole = run(seed=s, conf=conf)
+            cumulative_return += ret
+            cumulative_episode_length += ep_length
+            num_truncated += trunc
+            num_holes += hole
+
+        print(conf)
+        print("Average episode return: ", cumulative_return/num_seeds)
+        print("Average episode length: ", cumulative_episode_length/num_seeds)
+        print("Truncated episodes ratio: ", num_truncated/num_seeds)
+        print("Fall in hole ratio: ", num_holes/num_seeds)
 
     
 if __name__ == '__main__':
