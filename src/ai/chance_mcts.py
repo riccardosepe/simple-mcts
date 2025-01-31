@@ -82,7 +82,8 @@ class ChanceMCTS(MCTS):
             return super()._evaluate(leaf_node)
         else:
             node_state = leaf_node.game_state
-            return self._evaluator.evaluate(node_state)
+            node_time = leaf_node.time
+            return self._evaluator.evaluate(node_state, node_time)
 
     def _backpropagate(self, node, score, visits=1):
         if node is None:
