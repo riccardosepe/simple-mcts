@@ -6,7 +6,7 @@ from scipy.interpolate import RectBivariateSpline
 
 
 class FrozenLakeEvaluator:
-    def __init__(self, board, alpha=0.5):
+    def __init__(self, board, max_episode_length, alpha=0.5):
         self.board = board
         self.nrows, self.ncols = board.shape
         self._max_distance = self._manhattan([0, 0], [self.nrows-1, self.ncols-1])
@@ -19,6 +19,7 @@ class FrozenLakeEvaluator:
         else:
             self.alpha = np.array(alpha)
         self._landscape = self._build_landscape()
+        self._env_max_episode_length = max_episode_length
 
     @staticmethod
     def _manhattan(p1, p2):
@@ -87,6 +88,12 @@ class FrozenLakeEvaluator:
 
         return (n - h) / n
 
+    def _time_feature(self, t):
+        """
+        This function gives a score based on how much time the agent has left (the more, the closer to 1, the less,
+        the closer to 0)
+        """
+        return (self._env_max_episode_length - t) / self._env_max_episode_length
 
 
     def evaluate(self, obs, t):
