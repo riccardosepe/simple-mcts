@@ -17,7 +17,9 @@ class ChanceMCTS(MCTS):
         if alpha is None:
             self._evaluator = None
         else:
-            self._evaluator = FrozenLakeEvaluator(self.transition_model.desc, alpha)
+            self._evaluator = FrozenLakeEvaluator(self.transition_model.desc,
+                                                  max_episode_length=self.transition_model.max_episode_length,
+                                                  alpha=alpha)
 
     def _build_tree(self):
         return ChanceTree(self.transition_model.legal_actions, self.transition_model.backup())

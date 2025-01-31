@@ -8,10 +8,10 @@ SEED = 0
 
 def main(seed):
     print("Using seed ", seed)
-    env = MyFrozenLakeEnv(render_mode='human', is_slippery=False, map_name='4x4')
+    max_depth = 100
+    env = MyFrozenLakeEnv(render_mode='human', is_slippery=True, map_name='4x4', max_episode_length=max_depth)
     env.reset(seed=seed)
     keep_subtree = False
-    max_depth = 100
 
     agent = ChanceMCTS(env, seed=seed, adversarial=env.adversarial, gamma=1, keep_subtree=keep_subtree, max_depth=max_depth, alpha=0.72)
 

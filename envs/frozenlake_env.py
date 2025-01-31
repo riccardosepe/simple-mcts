@@ -11,6 +11,7 @@ UP = 3
 
 class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
     def __init__(self, *args, p=1/3, **kwargs):
+        self.max_episode_length = kwargs.pop('max_episode_length', 1000)
         super().__init__(*args, **kwargs)
         self._last_reward = None
         self.done = False

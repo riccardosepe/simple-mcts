@@ -13,7 +13,7 @@ def run(seed, conf):
 
     # group = group + f"_seed-{seed}"
 
-    env = MyFrozenLakeEnv(is_slippery=is_slippery)
+    env = MyFrozenLakeEnv(is_slippery=is_slippery, max_episode_length=max_depth)
     env.reset(seed=seed)
 
     agent = ChanceMCTS(env,
