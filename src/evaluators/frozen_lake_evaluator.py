@@ -13,7 +13,11 @@ class FrozenLakeEvaluator:
         goal_pos = np.argwhere(self.board == b'G')
         assert len(goal_pos) == 1
         self.goal_pos = goal_pos[0]
-        self.alpha = alpha
+        if type(alpha) is float or type(alpha) is int:
+            assert 0 <= alpha <= 1
+            self.alpha = np.array([alpha, 1-alpha])
+        else:
+            self.alpha = np.array(alpha)
         self._landscape = self._build_landscape()
 
     @staticmethod
@@ -84,8 +88,15 @@ class FrozenLakeEvaluator:
         return (n - h) / n
 
 
-    def evaluate(self, obs):
-        return self.alpha * self._distance(obs) + (1 - self.alpha) * self._safety(obs)
+
+    def evaluate(self, obs, t):
+        features = np.array([
+            self._distance_feature(obs),
+            self._safety_feature(obs),
+            # self._time_feature(t),
+        ])
+        assert len(self.alpha) == len(features)
+        return self.alpha @ features
 
 
     def _visualize_landscape(self):
