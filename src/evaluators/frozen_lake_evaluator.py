@@ -89,11 +89,14 @@ class FrozenLakeEvaluator:
 
         return (n - h) / n
 
-    def _time_feature(self, t):
+    def _time_feature(self, obs, t):
         """
         This function gives a score based on how much time the agent has left (the more, the closer to 1, the less,
         the closer to 0)
         """
+        i, j = self._pos_to_indices(obs)
+        if self.board[i, j] == b'G':
+            return 1
         return (self._env_max_episode_length - t) / self._env_max_episode_length
 
 
