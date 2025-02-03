@@ -18,6 +18,8 @@ class FrozenLakeEvaluator:
         assert len(start_pos) == 1
         self.start_pos = start_pos[0]
 
+        self.holes_pos = np.argwhere(self.board == b'H')
+
         if type(alpha) is float or type(alpha) is int:
             assert 0 <= alpha <= 1
             self.alpha = np.array([alpha, 1-alpha])
