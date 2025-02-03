@@ -32,7 +32,8 @@ def main(seed):
 
     print(env.game_result())
     env.close()
-    
+
+
 if __name__ == '__main__':
     for s in range(10):
         main(s)
