@@ -13,7 +13,9 @@ def main(seed):
     env.reset(seed=seed)
     keep_subtree = False
 
-    agent = ChanceMCTS(env, seed=seed, adversarial=env.adversarial, gamma=1, keep_subtree=keep_subtree, max_depth=max_depth, alpha=0.72)
+    alpha = 0.5
+
+    agent = ChanceMCTS(env, seed=seed, adversarial=env.adversarial, gamma=1, keep_subtree=keep_subtree, max_depth=max_depth, alpha=alpha)
 
     env.render()
 
