@@ -13,6 +13,11 @@ class FrozenLakeEvaluator:
         goal_pos = np.argwhere(self.board == b'G')
         assert len(goal_pos) == 1
         self.goal_pos = goal_pos[0]
+
+        start_pos = np.argwhere(self.board == b'S')
+        assert len(start_pos) == 1
+        self.start_pos = start_pos[0]
+
         if type(alpha) is float or type(alpha) is int:
             assert 0 <= alpha <= 1
             self.alpha = np.array([alpha, 1-alpha])
