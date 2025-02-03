@@ -96,6 +96,17 @@ class FrozenLakeEvaluator:
 
         return (n - h) / n
 
+    def _safety_feature2(self, obs):
+        sum_distances = 0
+        agent_pos = self._pos_to_indices(obs)
+        for hole_pos in self.holes_pos:
+            sum_distances += self._manhattan(agent_pos, hole_pos)
+
+        avg_distance = sum_distances/len(self.holes_pos)
+
+        # normalize
+        return avg_distance / self._max_distance
+
     def _time_feature(self, obs, t):
         """
         This function gives a score based on how much time the agent has left (the more, the closer to 1, the less,
