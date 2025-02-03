@@ -51,7 +51,7 @@ class FrozenLakeEvaluator:
                         queue.append((nx, ny, depth + 1))
                         visited.add((nx, ny))
 
-        return (landscape - np.min(landscape)) / -np.min(landscape)
+        return landscape / np.min(landscape)  # TODO
 
     def _distance_feature(self, obs):
         """
