@@ -18,6 +18,7 @@ class FrozenLakeEvaluator:
             self.alpha = np.array([alpha, 1-alpha])
         else:
             self.alpha = np.array(alpha)
+        assert np.sum(self.alpha) == 1
         self._landscape = self._build_landscape()
         self._env_max_episode_length = max_episode_length
 
