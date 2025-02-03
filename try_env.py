@@ -5,12 +5,15 @@ SEED = 0
 
 
 def main():
-    env = MyFrozenLakeEnv(render_mode='human', is_slippery=False)
+    max_ep_length = 100
+    env = MyFrozenLakeEnv(render_mode='human', is_slippery=False, max_episode_length=max_ep_length)
 
-    evaluator = FrozenLakeEvaluator(env.desc, alpha = 0.3)
+    alpha = 0.5
+
+    evaluator = FrozenLakeEvaluator(env.desc, alpha=alpha, max_episode_length=max_ep_length)
 
     obs, _ = env.reset()
-    print("Score: ", evaluator.evaluate(obs))
+    print("Score: ", evaluator.evaluate(obs, env.t))
     env.render()
 
     done = False
@@ -20,7 +23,7 @@ def main():
         obs, r, done, _, _ = env.step(action)
 
         print("Got reward ", r)
-        print("Score: ", evaluator.evaluate(obs))
+        print("Score: ", evaluator.evaluate(obs, env.t))
 
         env.render()
 
