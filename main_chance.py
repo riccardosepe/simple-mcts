@@ -5,13 +5,6 @@ HUMAN = True
 BOT = False
 SEED = 0
 
-SIMPLE_MAP = [
-    "SFFF",
-    "FFHF",
-    "FFFF",
-    "FFFG"
-]
-
 
 def main(seed):
     print("Using seed ", seed)
@@ -19,8 +12,7 @@ def main(seed):
     env = MyFrozenLakeEnv(
         render_mode='human',
         is_slippery=True,
-        # map_name='4x4',
-        desc=SIMPLE_MAP,
+        map_name='simple',
         max_episode_length=max_depth)
     env.reset(seed=seed)
     keep_subtree = False

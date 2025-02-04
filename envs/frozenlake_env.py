@@ -8,10 +8,23 @@ DOWN = 1
 RIGHT = 2
 UP = 3
 
+MAPS = {
+    'simple': [
+        "SFFF",
+        "FFHF",
+        "FFFF",
+        "FFFG"
+    ]
+}
+
 
 class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
     def __init__(self, *args, p=1/3, **kwargs):
         self.max_episode_length = kwargs.pop('max_episode_length', 1000)
+        if 'map_name' in kwargs and kwargs['map_name'] is not None:
+            desc = MAPS[kwargs['map_name']]
+            kwargs['map_name'] = None
+            kwargs['desc'] = desc
         super().__init__(*args, **kwargs)
         self._last_reward = None
         self.done = False
