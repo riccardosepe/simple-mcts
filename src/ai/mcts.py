@@ -27,7 +27,7 @@ class MCTS:
         random.seed(seed)
         np.random.seed(seed)
 
-    def _reset(self):
+    def reset(self):
         self.t = None
         self.tree = self._build_tree()
 
