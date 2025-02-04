@@ -21,7 +21,7 @@ MAPS = {
 class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
     def __init__(self, *args, p=1/3, **kwargs):
         self.max_episode_length = kwargs.pop('max_episode_length', 1000)
-        if 'map_name' in kwargs and kwargs['map_name'] is not None:
+        if 'map_name' in kwargs and kwargs['map_name'] is not None and kwargs['map_name'] in MAPS:
             desc = MAPS[kwargs['map_name']]
             kwargs['map_name'] = None
             kwargs['desc'] = desc
