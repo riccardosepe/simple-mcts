@@ -238,5 +238,6 @@ class Tree:
     def root(self):
         return self._root
 
-
-
+    @property
+    def nodes(self):
+        return self._nodes
