@@ -5,11 +5,23 @@ HUMAN = True
 BOT = False
 SEED = 0
 
+SIMPLE_MAP = [
+    "SFFF",
+    "FFHF",
+    "FFFF",
+    "FFFG"
+]
+
 
 def main(seed):
     print("Using seed ", seed)
-    max_depth = 100
-    env = MyFrozenLakeEnv(render_mode='human', is_slippery=False, map_name='4x4', max_episode_length=max_depth)
+    max_depth = 20
+    env = MyFrozenLakeEnv(
+        render_mode='human',
+        is_slippery=True,
+        # map_name='4x4',
+        desc=SIMPLE_MAP,
+        max_episode_length=max_depth)
     env.reset(seed=seed)
     keep_subtree = False
 
