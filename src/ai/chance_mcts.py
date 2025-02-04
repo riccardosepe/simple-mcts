@@ -106,7 +106,11 @@ class ChanceMCTS(MCTS):
         new_root = self.tree.root.children[state]
         self.tree.keep_subtree(new_root)
 
-    def plan(self, *args, **kwargs):
+    def plan(self, *args, explain=False, **kwargs):
         if isinstance(self.tree.root, ChanceNode):
             raise RuntimeError
-        return super().plan(*args, **kwargs)
+        best_action = super().plan(*args, **kwargs)
+        if explain:
+            assert not self._keep_subtree
+            pass
+        return best_action
