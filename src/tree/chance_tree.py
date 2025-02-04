@@ -45,6 +45,7 @@ class ChoiceNode(Node):
         super().__init__(parent_node, *args, **kwargs)
         del self._parent_node
         self._parent_nodes = {parent_node.id: parent_node} if parent_node is not None else {}
+        self._features = None
 
     def __repr__(self):
         return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
@@ -71,6 +72,14 @@ class ChoiceNode(Node):
     @property
     def is_root(self):
         return self._parent_nodes is None or all(map(lambda n: n is None, self._parent_nodes.values()))
+
+    @property
+    def features(self):
+        return self._features
+
+    @features.setter
+    def features(self, features):
+        self._features = features
 
     @staticmethod
     def generate_node_hash(node_data):
