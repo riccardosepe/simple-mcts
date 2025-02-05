@@ -1,13 +1,12 @@
 from envs.frozenlake_env import MyFrozenLakeEnv
-from tqdm import tqdm
 
 SEED = 0
 
 
 def main():
     max_ep_length = 100
-    num_iterations = 100
-    env = MyFrozenLakeEnv(render_mode='ansi', is_slippery=True, max_episode_length=max_ep_length)
+    num_iterations = 1000
+    env = MyFrozenLakeEnv(render_mode=None, is_slippery=True, max_episode_length=max_ep_length)
 
     plans = {
         0: [0, 4, 8, 9, 13, 14],
@@ -85,12 +84,13 @@ def main():
         trunc = 0
         success = 0
         hole = 0
+        tot_length = 0
         for cell in plans[plan]:
-            checkpoint['state'] = cell
-            env.reset()
-            env.load(checkpoint)
-            obs = cell
             for _ in range(num_iterations):
+                checkpoint['state'] = cell
+                env.reset()
+                env.load(checkpoint)
+                obs = cell
                 done = False
                 while not done and env.t < max_ep_length:
                     action = action_tables[plan][obs]
@@ -104,14 +104,16 @@ def main():
                         success += 1
                     else:
                         hole += 1
+                tot_length += env.t
 
         results[plan] = (success / (num_iterations * len(plans[plan])),
                          hole / (num_iterations * len(plans[plan])),
-                         trunc / (num_iterations * len(plans[plan])))
+                         trunc / (num_iterations * len(plans[plan])),
+                         tot_length / (num_iterations * len(plans[plan])))
 
     for p, result in results.items():
-        s, h, t = result
-        print(f"Plan {p}: success {s*100}% holes {h*100}% trunc {t*100}%")
+        s, h, t, l = result
+        print(f"Plan {p}: success {s*100}% holes {h*100}% trunc {t*100}% avg_ep_length {l}")
     
 if __name__ == '__main__':
     main()
