@@ -124,3 +124,40 @@ class ChanceTree(Tree):
 
     def get_choice_node_if_existing(self, node_hash):
         return self._choice_nodes.get(node_hash)
+
+    def delete_subtree(self, node, parent):
+        """
+        This method deletes a subtree that starts from `node` (included). It is only used within the method
+        `keep_subtree`.
+        """
+        self._delete_subtree(node)
+        assert node in parent.children.values()
+        parent.children[node.action] = None
+        parent.available_actions.append(node.action)
+        del self._nodes[node.id]
+
+    def _delete_subtree(self, node):
+        """
+        This method recursively delete a subtree that starts from `node` (excluded)
+        """
+        if node.is_leaf:
+            return
+        for child_id in node.children:
+            child_node = node.children[child_id]
+            if child_node is None:
+                continue
+            self._delete_subtree(child_node)
+
+            if isinstance(child_node, ChoiceNode):
+                assert node.id in child_node.parents
+                child_node.parents.pop(node.id)
+                if len(child_node.parents) == 0:
+                    del self._nodes[child_node.id]
+                    s = child_node.game_state
+                    t = child_node.time
+                    del self._choice_nodes[(s, t)]
+            else:
+                del self._nodes[child_node.id]
+
+            node.children[child_id] = None
+            node.available_actions.append(child_node.action)
