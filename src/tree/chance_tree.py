@@ -56,7 +56,7 @@ class ChoiceNode(Node):
     def set_root(self):
         assert self._parent_nodes is not None
         assert not all(map(lambda n: n is None, self._parent_nodes.values()))
-        self._parent_nodes = None
+        self._parent_nodes = {}
 
     def add_parent(self, parent):
         self._parent_nodes[parent.id] = parent
