@@ -18,10 +18,10 @@ class ChanceNode(Node):
         del self._game_data
 
     def __repr__(self):
-        return f"Chance(visits={self.visits}, score={self.score}, action={self._action})"
+        return f"Chance(id={self.id}, visits={self.visits}, score={self.score}, action={self._action})"
 
     def __str__(self):
-        return f"Chance(visits={self.visits}, score=n.a., action={self._action})"
+        return f"Chance(id={self.id}, visits={self.visits}, score=n.a., action={self._action})"
 
     def update_score(self, score):
         raise RuntimeError
@@ -48,10 +48,10 @@ class ChoiceNode(Node):
         self._features = None
 
     def __repr__(self):
-        return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
+        return f"Choice(id={self.id}, visits={self.visits}, score={self.score}, state={self._action}, #parents={len(self._parent_nodes)})"
 
     def __str__(self):
-        return f"Choice(visits={self.visits}, score=n.a., state={self._action})"
+        return f"Choice(id={self.id}, visits={self.visits}, score=n.a., state={self._action}, #parents={len(self._parent_nodes)})"
 
     def set_root(self):
         assert self._parent_nodes is not None
