@@ -112,9 +112,10 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         return self.lastaction
 
     def step(self, a):
+        render_mode = self.render_mode
         self.render_mode = ''
         s, r, d, t, i = super().step(a)
-        self.render_mode = 'human'
+        self.render_mode = render_mode
         self._last_reward = r
         self.done = d
         self.t += 1
