@@ -3,6 +3,8 @@ import time
 from functools import cmp_to_key
 
 import numpy as np
+from tqdm import tqdm
+
 from src.tree.tree import Tree, Node
 
 
@@ -13,6 +15,7 @@ class MCTS:
                  gamma=1,
                  keep_subtree=True,
                  max_depth=1000,
+                 use_tqdm=False,
                  seed=None):
 
         self.transition_model = transition_model
@@ -23,6 +26,8 @@ class MCTS:
         self._max_depth = max_depth
 
         self.t = None
+
+        self._use_tqdm = use_tqdm
 
         random.seed(seed)
         np.random.seed(seed)
@@ -137,6 +142,11 @@ class MCTS:
         :return: the chosen action
         """
 
+        if self._use_tqdm and iterations_budget is not None:
+            progress_bar = tqdm(total=iterations_budget)
+        else:
+            progress_bar = None
+
         if iterations_budget is None and time_budget is None:
             raise ValueError("Either iterations_budget or time_budget must be set")
         elif iterations_budget is None:
@@ -153,6 +163,8 @@ class MCTS:
             self._plan_iteration()
             elapsed_time = time.time() - start_time
             iteration += 1
+            if progress_bar:
+                progress_bar.update(1)
 
         best_child = self.root_best_child()
         if self._keep_subtree:
