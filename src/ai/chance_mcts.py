@@ -34,11 +34,7 @@ class ChanceMCTS(MCTS):
                 node = chance_node.children[s]
             else:
                 # insert a chance node
-                node = self.tree.insert_node(chance_node.id,
-                                             action=s,  # TODO: "action" is actually a state -> HASH
-                                             legal_actions=self.transition_model.legal_actions,
-                                             node_data=self.transition_model.backup(),
-                                             chance=False)
+                node = self._insert_or_get_choice_node(chance_node, self.transition_model.backup())
             self.t += 1
         return node
 
@@ -54,25 +50,8 @@ class ChanceMCTS(MCTS):
                                                 node_data=None,
                                                 chance=True)
 
-        # then insert a choice node
-        # if there is already a hashed choice node, use that one instead
-        node_data = self.transition_model.backup()
-        node_hash = ChoiceNode.generate_node_hash(node_data)
-        hashed_node = self.tree.get_choice_node_if_existing(node_hash)
-        if hashed_node is None:
-            new_choice_node = self.tree.insert_node(new_chance_node.id,
-                                                    action=s,
-                                                    legal_actions=self.transition_model.legal_actions,
-                                                    node_data=self.transition_model.backup(),
-                                                    chance=False)
-        else:
-            new_choice_node = hashed_node
-            # IMPORTANT: when a hashed node is detected, it's important to first backpropagate its statistics to the root
-            # and then go on with the simulation. At that point, backpropagate the new results along all paths
-            self._backpropagate(new_chance_node, hashed_node.score, hashed_node.visits)
-
-            new_chance_node.add_child(hashed_node)
-            hashed_node.add_parent(new_chance_node)
+        # then insert a choice node if it's not hashed
+        new_choice_node = self._insert_or_get_choice_node(new_chance_node, self.transition_model.backup())
         self.t += 1
 
         return new_choice_node
@@ -114,3 +93,25 @@ class ChanceMCTS(MCTS):
             assert not self._keep_subtree
             pass
         return best_action
+
+    def _insert_or_get_choice_node(self, parent_node, node_data):
+        s = node_data['state']
+        node_data = self.transition_model.backup()
+        node_hash = ChoiceNode.generate_node_hash(node_data)
+        hashed_node = self.tree.get_choice_node_if_existing(node_hash)
+        if hashed_node is None:
+            new_choice_node = self.tree.insert_node(parent_node.id,
+                                                    action=s,
+                                                    legal_actions=self.transition_model.legal_actions,
+                                                    node_data=self.transition_model.backup(),
+                                                    chance=False)
+        else:
+            new_choice_node = hashed_node
+            # IMPORTANT: when a hashed node is detected, it's important to first backpropagate its statistics to the root
+            # and then go on with the simulation. At that point, backpropagate the new results along all paths
+            self._backpropagate(parent_node, hashed_node.score, hashed_node.visits)
+
+            parent_node.add_child(hashed_node)
+            hashed_node.add_parent(parent_node)
+
+        return new_choice_node
