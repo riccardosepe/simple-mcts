@@ -124,7 +124,7 @@ class ChanceMCTS(MCTS):
             new_choice_node = hashed_node
             # IMPORTANT: when a hashed node is detected, it's important to first backpropagate its statistics to the root
             # and then go on with the simulation. At that point, backpropagate the new results along all paths
-            self._backpropagate(parent_node, hashed_node.score, hashed_node.visits)
+            self._backpropagate_parents(parent_node, hashed_node.score, hashed_node.visits)
 
             parent_node.add_child(hashed_node)
             hashed_node.add_parent(parent_node)
