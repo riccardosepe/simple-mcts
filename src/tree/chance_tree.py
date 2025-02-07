@@ -123,7 +123,12 @@ class ChanceTree(Tree):
         return new_node
 
     def get_choice_node_if_existing(self, node_hash):
-        return self._choice_nodes.get(node_hash)
+        return None
+        # return self._choice_nodes.get(node_hash)
+
+    def delete_choice_node(self, node_hash):
+        # del self._choice_nodes[node_hash]
+        pass
 
     def delete_subtree(self, node, parent):
         """
@@ -155,7 +160,7 @@ class ChanceTree(Tree):
                     del self._nodes[child_node.id]
                     s = child_node.game_state
                     t = child_node.time
-                    del self._choice_nodes[(s, t)]
+                    self.delete_choice_node((s,t))
             else:
                 del self._nodes[child_node.id]
 
