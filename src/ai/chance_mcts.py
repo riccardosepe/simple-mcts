@@ -14,6 +14,7 @@ class ChanceMCTS(MCTS):
     def __init__(self, *args, alpha=None, **kwargs):
         kwargs['adversarial'] = False
         super().__init__(*args, **kwargs)
+        self.trajectory = None
         if alpha is None:
             self._evaluator = None
         else:
@@ -26,6 +27,7 @@ class ChanceMCTS(MCTS):
 
     def _select(self):
         node = self.tree.root
+        self.trajectory = [node]
         while not node.is_leaf and node.is_fully_expanded:
             chance_node = self.select_ucb(node)
             s, _, _, _, _ = self.transition_model.step(chance_node.action)
@@ -36,6 +38,9 @@ class ChanceMCTS(MCTS):
                 # insert a chance node
                 node = self._insert_or_get_choice_node(chance_node, self.transition_model.backup())
             self.t += 1
+
+            self.trajectory.append(chance_node)
+            self.trajectory.append(node)
         return node
 
     def _expand(self, node):
@@ -54,6 +59,8 @@ class ChanceMCTS(MCTS):
         new_choice_node = self._insert_or_get_choice_node(new_chance_node, self.transition_model.backup())
         self.t += 1
 
+        self.trajectory.append(new_chance_node)
+        self.trajectory.append(new_choice_node)
         return new_choice_node
 
     def _evaluate(self, leaf_node):
@@ -66,7 +73,15 @@ class ChanceMCTS(MCTS):
             leaf_node.features = features
             return value
 
-    def _backpropagate(self, node, score, visits=1):
+    def _backpropagate(self, _, score, visits=1):
+        assert len(self.trajectory) > 0
+        while len(self.trajectory) > 0:
+            node = self.trajectory.pop()
+            if isinstance(node, ChoiceNode):
+                node.update_score(score)
+            node.visit(visits)
+
+    def _backpropagate_parents(self, node, score, visits=1):
         if node is None:
             return
 
