@@ -8,12 +8,11 @@ SEED = 0
 
 def main(seed):
     print("Using seed ", seed)
-    max_depth = 20
+    max_depth = 100
     env = MyFrozenLakeEnv(
         render_mode='human',
         is_slippery=True,
         map_name='4x4',
-        # desc=["FSFF", "FHFH", "FFFH", "HFFG"],
         max_episode_length=max_depth)
     env.reset(seed=seed)
 
@@ -25,7 +24,7 @@ def main(seed):
                        gamma=1,
                        keep_subtree=True,
                        max_depth=max_depth,
-                       use_tqdm=True,
+                       use_tqdm=False,
                        alpha=alpha)
 
     env.render()
@@ -33,7 +32,7 @@ def main(seed):
     done = False
     i = 0
     while not done and env.t < max_depth:
-        action = agent.plan(iterations_budget=100)
+        action = agent.plan(iterations_budget=5000)
         obs, _, done, _, _ = env.step(action)
         i += 1
         env.render()
