@@ -123,6 +123,13 @@ class Node:
     def player(self):
         return self._game_data['player']
 
+    @property
+    def value(self):
+        if self.visits == 0:
+            return 0
+
+        return self.score / self.visits
+
 class Tree:
 
     @staticmethod
@@ -231,5 +238,6 @@ class Tree:
     def root(self):
         return self._root
 
-
-
+    @property
+    def nodes(self):
+        return self._nodes

@@ -118,14 +118,25 @@ class FrozenLakeEvaluator:
         return (self._env_max_episode_length - t) / self._env_max_episode_length
 
 
-    def evaluate(self, obs, t):
+    def evaluate(self, obs, t, with_features=False):
         features = np.array([
             self._distance_feature(obs),
             self._safety_feature(obs),
             # self._time_feature(t),
         ])
         assert len(self.alpha) == len(features)
-        return self.alpha @ features
+        if with_features:
+            i, j = self._pos_to_indices(obs)
+            f = {
+                'dist': features[0],
+                'safe': features[1],
+                # 'time': features[2],
+                'goal': self.board[i, j] == b'G',
+                'hole': self.board[i, j] == b'H',
+            }
+            return self.alpha @ features, f
+        else:
+            return self.alpha @ features
 
 
     def _visualize_landscape(self):

@@ -8,31 +8,36 @@ SEED = 0
 
 def main(seed):
     print("Using seed ", seed)
-    max_depth = 20
+    max_depth = 100
     env = MyFrozenLakeEnv(
         render_mode='human',
         is_slippery=True,
-        map_name='simple',
+        map_name='4x4',
         max_episode_length=max_depth)
     env.reset(seed=seed)
-    keep_subtree = False
 
-    alpha = 0.85
+    alpha = None
 
-    agent = ChanceMCTS(env, seed=seed, adversarial=env.adversarial, gamma=1, keep_subtree=keep_subtree, max_depth=max_depth, alpha=alpha)
+    agent = ChanceMCTS(env,
+                       seed=seed,
+                       adversarial=env.adversarial,
+                       gamma=1,
+                       keep_subtree=True,
+                       max_depth=max_depth,
+                       use_tqdm=False,
+                       alpha=alpha)
 
     env.render()
 
     done = False
     i = 0
     while not done and env.t < max_depth:
-        action = agent.plan(iterations_budget=100)
+        action = agent.plan(iterations_budget=5000)
         obs, _, done, _, _ = env.step(action)
         i += 1
         env.render()
-
-        if keep_subtree:
-            agent.determinize_chance_node(obs)  # TODO: hash states
+        # agent.reset()
+        agent.determinize_chance_node(obs)
 
     print(env.game_result())
     env.close()

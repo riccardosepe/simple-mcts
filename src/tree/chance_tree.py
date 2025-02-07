@@ -18,10 +18,10 @@ class ChanceNode(Node):
         del self._game_data
 
     def __repr__(self):
-        return f"Chance(visits={self.visits}, score={self.score}, action={self._action})"
+        return f"Chance(id={self.id}, visits={self.visits}, score={self.score}, action={self._action})"
 
     def __str__(self):
-        return f"Chance(visits={self.visits}, score=n.a., action={self._action})"
+        return f"Chance(id={self.id}, visits={self.visits}, score=n.a., action={self._action})"
 
     def update_score(self, score):
         raise RuntimeError
@@ -45,17 +45,18 @@ class ChoiceNode(Node):
         super().__init__(parent_node, *args, **kwargs)
         del self._parent_node
         self._parent_nodes = {parent_node.id: parent_node} if parent_node is not None else {}
+        self._features = None
 
     def __repr__(self):
-        return f"Choice(visits={self.visits}, score={self.score}, state={self._action})"
+        return f"Choice(id={self.id}, visits={self.visits}, score={self.score}, state={self._action}, #parents={len(self._parent_nodes)})"
 
     def __str__(self):
-        return f"Choice(visits={self.visits}, score=n.a., state={self._action})"
+        return f"Choice(id={self.id}, visits={self.visits}, score=n.a., state={self._action}, #parents={len(self._parent_nodes)})"
 
     def set_root(self):
         assert self._parent_nodes is not None
         assert not all(map(lambda n: n is None, self._parent_nodes.values()))
-        self._parent_nodes = None
+        self._parent_nodes = {}
 
     def add_parent(self, parent):
         self._parent_nodes[parent.id] = parent
@@ -71,6 +72,14 @@ class ChoiceNode(Node):
     @property
     def is_root(self):
         return self._parent_nodes is None or all(map(lambda n: n is None, self._parent_nodes.values()))
+
+    @property
+    def features(self):
+        return self._features
+
+    @features.setter
+    def features(self, features):
+        self._features = features
 
     @staticmethod
     def generate_node_hash(node_data):
@@ -114,4 +123,46 @@ class ChanceTree(Tree):
         return new_node
 
     def get_choice_node_if_existing(self, node_hash):
-        return self._choice_nodes.get(node_hash)
+        return None
+        # return self._choice_nodes.get(node_hash)
+
+    def delete_choice_node(self, node_hash):
+        # del self._choice_nodes[node_hash]
+        pass
+
+    def delete_subtree(self, node, parent):
+        """
+        This method deletes a subtree that starts from `node` (included). It is only used within the method
+        `keep_subtree`.
+        """
+        self._delete_subtree(node)
+        assert node in parent.children.values()
+        parent.children[node.action] = None
+        parent.available_actions.append(node.action)
+        del self._nodes[node.id]
+
+    def _delete_subtree(self, node):
+        """
+        This method recursively delete a subtree that starts from `node` (excluded)
+        """
+        if node.is_leaf:
+            return
+        for child_id in node.children:
+            child_node = node.children[child_id]
+            if child_node is None:
+                continue
+            self._delete_subtree(child_node)
+
+            if isinstance(child_node, ChoiceNode):
+                assert node.id in child_node.parents
+                child_node.parents.pop(node.id)
+                if len(child_node.parents) == 0:
+                    del self._nodes[child_node.id]
+                    s = child_node.game_state
+                    t = child_node.time
+                    self.delete_choice_node((s,t))
+            else:
+                del self._nodes[child_node.id]
+
+            node.children[child_id] = None
+            node.available_actions.append(child_node.action)
