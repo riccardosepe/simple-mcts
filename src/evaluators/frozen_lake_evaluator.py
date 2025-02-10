@@ -77,7 +77,7 @@ class FrozenLakeEvaluator:
         Moreover, if the agent is on the goal, safety = 1, if the agent is in an ice pit, safety = 0.
         """
         h = 0
-        n = 0
+        n = 4
 
         x, y = self._pos_to_indices(obs)
 
@@ -90,7 +90,7 @@ class FrozenLakeEvaluator:
         for i, j in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             if 0 <= x + i < self.nrows and 0 <= y + j < self.ncols:
                 c = self.board[x + i, y + j]
-                n += 1
+                # n += 1
                 if c == b'H':
                     h += 1
 
