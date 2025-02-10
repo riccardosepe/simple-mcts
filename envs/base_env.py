@@ -2,6 +2,10 @@ from abc import ABC, abstractmethod
 
 
 class BaseEnv(ABC):
+    WON = 0
+    LOST = 1
+    STILL_RUNNING = 2
+
     @property
     @abstractmethod
     def legal_actions(self):
