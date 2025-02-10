@@ -143,14 +143,23 @@ class MyFrozenLakeEnv(BaseEnv, FrozenLakeEnv):
         self.done = checkpoint['done']
         self.t = checkpoint['t']
 
-    def game_result(self):
+    def game_result(self, code=False):
         if not self.done:
-            return "Game still running"
+            if code:
+                return self.STILL_RUNNING
+            else:
+                return "Game still running"
         else:
             if self.desc.flatten()[self.s] == b'G':
-                return f"You made it after {self.t} steps!"
+                if code:
+                    return self.WON
+                else:
+                    return f"You made it after {self.t} steps!"
             else:
-                return f"You fell into an ice pit after {self.t} steps :("
+                if code:
+                    return self.LOST
+                else:
+                    return f"You fell into an ice pit after {self.t} steps :("
 
     def reward(self):
         return self._last_reward
