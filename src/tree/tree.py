@@ -191,7 +191,7 @@ class Tree:
         # Delete the subtree relative to all the other children
         for action in list(self._root.children):
             n = self._root.children[action]
-            if n is node:
+            if n is node or n is None:
                 continue
 
             self.delete_subtree(n, self._root)
