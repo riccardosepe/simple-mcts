@@ -1,5 +1,6 @@
 from src import MCTS
 from src.evaluators.frozen_lake_evaluator import FrozenLakeEvaluator
+from src.explainers.frozen_lake_explainer import FrozenLakeExplainer
 from src.tree.chance_tree import ChanceTree, ChoiceNode, ChanceNode
 
 
@@ -21,6 +22,7 @@ class ChanceMCTS(MCTS):
             self._evaluator = FrozenLakeEvaluator(self.transition_model.desc,
                                                   max_episode_length=self.transition_model.max_episode_length,
                                                   alpha=alpha)
+        self._explainer = FrozenLakeExplainer()
 
     def _build_tree(self):
         return ChanceTree(self.transition_model.legal_actions, self.transition_model.backup())
