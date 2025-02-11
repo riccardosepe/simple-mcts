@@ -28,9 +28,24 @@ class FrozenLakeExplainer:
             values_high_proximity[a] = FrozenLakeExplainer.high_proximity(subtree)
 
         # 5. goal reached
+        values_goal_reached = {}
+        for a, subtree in subtrees.items():
+            values_goal_reached[a] = FrozenLakeExplainer.goal_reached(subtree)
+
         # 6. goal not reached
+        values_goal_not_reached = {}
+        for a, subtree in subtrees.items():
+            values_goal_not_reached[a] = FrozenLakeExplainer.goal_not_reached(subtree)
+
         # 7. fell in hole
+        values_hole_fall = {}
+        for a, subtree in subtrees.items():
+            values_hole_fall[a] = FrozenLakeExplainer.hole_fall(subtree)
+
         # 8. didn't fall in hole
+        values_hole_not_fall = {}
+        for a, subtree in subtrees.items():
+            values_hole_not_fall[a] = FrozenLakeExplainer.hole_not_fall(subtree)
         print()
 
     @staticmethod
