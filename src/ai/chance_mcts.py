@@ -34,15 +34,16 @@ class ChanceMCTS(MCTS):
             chance_node = self.select_ucb(node)
             s, _, _, _, _ = self.transition_model.step(chance_node.action)
             # TODO: HASHING. FOR THE MOMENT (FROZEN LAKE) THE STATE IS JUST AN INTEGER
-            if chance_node.children[s] is not None:
-                node = chance_node.children[s]
-            else:
-                # insert a chance node
-                node = self._insert_or_get_choice_node(chance_node, self.transition_model.backup())
             self.t += 1
 
             self.trajectory.append(chance_node)
-            self.trajectory.append(node)
+
+            if chance_node.children[s] is not None:
+                node = chance_node.children[s]
+                self.trajectory.append(node)
+            else:
+                # return current node for expansion
+                return chance_node
         return node
 
     def _expand(self, node):
