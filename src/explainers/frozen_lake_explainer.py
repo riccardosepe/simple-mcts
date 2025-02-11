@@ -29,6 +29,41 @@ class FrozenLakeExplainer:
         return sum(map(lambda n: n[0] * n[1], low_safety_nodes))
 
     @staticmethod
+    def high_safety(nodes):
+        high_safety_nodes = filter(lambda x: x[0] > 0.5, map(lambda n: (n.features['safe'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], high_safety_nodes))
+
+    @staticmethod
+    def low_proximity(nodes):
+        low_proximity_nodes = filter(lambda x: x[0] <= 0.5, map(lambda n: (n.features['dist'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], low_proximity_nodes))
+
+    @staticmethod
+    def high_proximity(nodes):
+        high_proximity_nodes = filter(lambda x: x[0] > 0.5, map(lambda n: (n.features['dist'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], high_proximity_nodes))
+
+    @staticmethod
+    def goal_reached(nodes):
+        goal_reached_nodes = filter(lambda x: x[0], map(lambda n: (n.features['goal'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], goal_reached_nodes))
+
+    @staticmethod
+    def goal_not_reached(nodes):
+        goal_not_reached_nodes = filter(lambda x: not x[0], map(lambda n: (n.features['goal'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], goal_not_reached_nodes))
+
+    @staticmethod
+    def hole_fall(nodes):
+        hole_fall_nodes = filter(lambda x: x[0], map(lambda n: (n.features['hole'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], hole_fall_nodes))
+
+    @staticmethod
+    def hole_not_fall(nodes):
+        hole_not_fall_nodes = filter(lambda x: not x[0], map(lambda n: (n.features['hole'], n.value), nodes))
+        return sum(map(lambda n: n[0] * n[1], hole_not_fall_nodes))
+
+    @staticmethod
     def find_subtrees(tree):
         subtrees = dict.fromkeys(tree.root.children, set())
         for a, node in tree.root.children.items():
