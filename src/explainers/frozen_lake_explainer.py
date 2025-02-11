@@ -46,6 +46,19 @@ class FrozenLakeExplainer:
         values_hole_not_fall = {}
         for a, subtree in subtrees.items():
             values_hole_not_fall[a] = FrozenLakeExplainer.hole_not_fall(subtree)
+
+        action_scenarios_values = {}
+        for a in subtrees:
+            action_scenarios_values[a] = (values_low_safety[a],
+                                          values_high_safety[a],
+                                          values_low_proximity[a],
+                                          values_high_proximity[a],
+                                          values_goal_reached[a],
+                                          values_goal_not_reached[a],
+                                          values_hole_fall[a],
+                                          values_hole_not_fall[a],
+                                          )
+
         print()
 
     @staticmethod
