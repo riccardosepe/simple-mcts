@@ -58,7 +58,7 @@ def main():
 
         conf = {
             'is_slippery': True,
-            'iterations_budget': 100,
+            'iterations_budget': 1000,
             'max_depth': 100,
             'num_seeds': 1000,
             'group': 'rand_vs_function',
