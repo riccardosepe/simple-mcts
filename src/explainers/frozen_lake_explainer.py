@@ -32,11 +32,10 @@ class FrozenLakeExplainer:
     def find_subtrees(tree):
         subtrees = dict.fromkeys(tree.root.children, set())
         for a, node in tree.root.children.items():
-            subtree = set()
+            subtree = subtrees[a]
             if node is None:
                 continue
             FrozenLakeExplainer._dfs(node, subtree)
-            subtrees[a] = subtree
 
         return subtrees
 
