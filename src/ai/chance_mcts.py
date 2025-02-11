@@ -83,6 +83,7 @@ class ChanceMCTS(MCTS):
 
     def _backpropagate(self, _, score, visits=1):
         assert len(self.trajectory) > 0
+        assert isinstance(self.trajectory[-1], ChoiceNode)
         while len(self.trajectory) > 0:
             node = self.trajectory.pop()
             if isinstance(node, ChoiceNode):
