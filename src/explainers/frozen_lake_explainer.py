@@ -14,9 +14,22 @@ class FrozenLakeExplainer:
         values_low_safety = {}
         for a, subtree in subtrees.items():
             values_low_safety[a] = FrozenLakeExplainer.low_safety(subtree)
+
         # 2. safety > 50%
-        # 3. distance <= 50%
-        # 4. distance > 50%
+        values_high_safety = {}
+        for a, subtree in subtrees.items():
+            values_high_safety[a] = FrozenLakeExplainer.high_safety(subtree)
+
+        # 3. proximity <= 50%
+        values_low_proximity = {}
+        for a, subtree in subtrees.items():
+            values_low_proximity[a] = FrozenLakeExplainer.low_proximity(subtree)
+
+        # 4. proximity > 50%
+        values_high_proximity = {}
+        for a, subtree in subtrees.items():
+            values_high_proximity[a] = FrozenLakeExplainer.high_proximity(subtree)
+
         # 5. goal reached
         # 6. goal not reached
         # 7. fell in hole
