@@ -19,7 +19,7 @@ def run(seed, conf):
     agent = ChanceMCTS(env,
                        seed=seed,
                        adversarial=False,
-                       keep_subtree=False,
+                       keep_subtree=True,
                        max_depth=max_depth,
                        alpha=alpha,)
 
@@ -29,7 +29,8 @@ def run(seed, conf):
     hole = False
     while not done and env.t < max_depth:
         action = agent.plan(iterations_budget=iterations_budget)
-        _, reward, done, trunc, _ = env.step(action)
+        obs, reward, done, trunc, _ = env.step(action)
+        agent.determinize_chance_node(obs)
 
     if not done and env.t >= max_depth and reward == 0:
         trunc = True
