@@ -114,8 +114,7 @@ class ChanceMCTS(MCTS):
             raise RuntimeError
         best_action = super().plan(*args, **kwargs)
         if explain:
-            assert not self._keep_subtree
-            pass
+            self._explainer.explain(self.tree, best_action)
         return best_action
 
     def _insert_or_get_choice_node(self, parent_node, node_data):
