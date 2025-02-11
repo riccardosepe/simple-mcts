@@ -47,22 +47,27 @@ class ChanceMCTS(MCTS):
         return node
 
     def _expand(self, node):
-        random_action = node.random_action()
-        support_random_action = self.transition_model.next_states(random_action)
-        s, _, _, _, _ = self.transition_model.step(random_action)
+        if isinstance(node, ChoiceNode):
+            random_action = node.random_action()
+            support_random_action = self.transition_model.next_states(random_action)
+            s, _, _, _, _ = self.transition_model.step(random_action)
 
-        # insert first a chance node
-        new_chance_node = self.tree.insert_node(node.id,
-                                                action=random_action,
-                                                legal_actions=support_random_action,
-                                                node_data=None,
-                                                chance=True)
+            # insert first a chance node
+            new_chance_node = self.tree.insert_node(node.id,
+                                                    action=random_action,
+                                                    legal_actions=support_random_action,
+                                                    node_data=None,
+                                                    chance=True)
+            self.trajectory.append(new_chance_node)
+        elif isinstance(node, ChanceNode):
+            new_chance_node = node
+        else:
+            raise RuntimeError
 
         # then insert a choice node if it's not hashed
         new_choice_node = self._insert_or_get_choice_node(new_chance_node, self.transition_model.backup())
         self.t += 1
 
-        self.trajectory.append(new_chance_node)
         self.trajectory.append(new_choice_node)
         return new_choice_node
 
