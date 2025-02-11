@@ -54,7 +54,7 @@ def main():
     # wandb.finish()
     #
 
-    for alpha in [0.8, 0.85, 0.9, 0.95]:
+    for alpha in [0, 0.25, 0.5, 0.75, 1]:
 
         conf = {
             'is_slippery': True,
