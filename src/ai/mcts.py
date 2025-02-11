@@ -5,6 +5,7 @@ from functools import cmp_to_key
 import numpy as np
 from tqdm import tqdm
 
+from src.tree.chance_tree import ChanceNode
 from src.tree.tree import Tree, Node
 
 
@@ -109,7 +110,8 @@ class MCTS:
         # NB: very uncommon in practice, the following lines handle small game trees where it's possible to reach a
         # terminal state during the expansion phase
 
-        if not selected_node.is_terminal:
+        # TODO: IS THIS THE BETTER WAY TO ACHIEVE THIS?
+        if isinstance(selected_node, ChanceNode) or not selected_node.is_terminal:
             # 2. EXPAND
             expanded_node = self._expand(selected_node)
             terminal_node = expanded_node
