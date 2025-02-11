@@ -27,7 +27,7 @@ def run(seed, conf):
     reward = 0
     trunc = False
     hole = False
-    while not done and env.t <= max_depth:
+    while not done and env.t < max_depth:
         action = agent.plan(iterations_budget=iterations_budget)
         _, reward, done, trunc, _ = env.step(action)
 
